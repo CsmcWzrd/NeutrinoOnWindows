@@ -1,0 +1,2 @@
+# NMake Windows entry point.
+!INCLUDE Makefile.msvc

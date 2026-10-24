@@ -1,0 +1,92 @@
+# nmake /f Makefile.msvc [CONFIG=Debug|Release]
+!IFNDEF CONFIG
+CONFIG=Release
+!ENDIF
+!IFNDEF BUILD_DIR
+BUILD_DIR=build-msvc
+!ENDIF
+CXX=cl
+AR=lib
+CPPFLAGS=/Iinclude /DWIN32_LEAN_AND_MEAN /DNOMINMAX /DUNICODE /D_UNICODE /D_CRT_SECURE_NO_WARNINGS /DWINVER=0x0A00 /D_WIN32_WINNT=0x0A00
+!IF "$(CONFIG)" == "Debug"
+CXXFLAGS=/nologo /EHsc /std:c++17 /utf-8 /W3 /Zi /Od /MTd
+!ELSE
+CXXFLAGS=/nologo /EHsc /std:c++17 /utf-8 /W3 /O2 /MT /DNDEBUG
+!ENDIF
+OUT=$(BUILD_DIR)\$(CONFIG)
+LIBRARY=$(OUT)\Neutrino.lib
+SYSTEM_LIBS=user32.lib gdi32.lib comctl32.lib
+EXAMPLES=$(OUT)\neutrino_demo.exe $(OUT)\neutrino_test_all_controls.exe $(OUT)\neutrino_test_windows.exe $(OUT)\neutrino_test_typed_views.exe $(OUT)\neutrino_test_smooth_graphics.exe $(OUT)\neutrino_test_treeview_collapse.exe $(OUT)\neutrino_test_heavy_data.exe $(OUT)\neutrino_test_01_buttons_icons.exe $(OUT)\neutrino_test_02_text_inputs.exe $(OUT)\neutrino_test_03_lists_combo_autoscroll.exe $(OUT)\neutrino_test_04_listview_typed_data.exe $(OUT)\neutrino_test_05_treeview_collapse.exe $(OUT)\neutrino_test_06_placement_layout_scaling.exe $(OUT)\neutrino_test_07_popup_menu_categories.exe $(OUT)\neutrino_test_08_richtext_code.exe $(OUT)\neutrino_test_09_readonly_richtext_icons.exe $(OUT)\neutrino_test_10_images_progress_labels.exe $(OUT)\neutrino_test_11_rendering_buffering.exe $(OUT)\neutrino_test_12_scroll_windows_heavy_data.exe $(OUT)\neutrino_test_13_swing_swt_controls.exe $(OUT)\neutrino_test_14_label_offsets_themes.exe $(OUT)\neutrino_test_15_selection_controls.exe $(OUT)\neutrino_test_16_value_controls.exe $(OUT)\neutrino_test_17_tabs_toolbar_splitter.exe $(OUT)\neutrino_test_18_stage2_scroll_controls.exe $(OUT)\neutrino_test_19_material_beauty.exe $(OUT)\neutrino_test_20_full_richtext_control.exe $(OUT)\neutrino_test_21_full_richtext_code_control.exe $(OUT)\neutrino_test_22_cards.exe $(OUT)\neutrino_win32_demo.exe
+all: $(LIBRARY) $(EXAMPLES)
+library: $(LIBRARY)
+$(OUT):
+	@if not exist "$(OUT)" mkdir "$(OUT)"
+$(OUT)\Neu_Win32.obj: src\win32\Neu_Win32.cpp include\Neutrino\Neutrino.hpp $(OUT)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) /c src\win32\Neu_Win32.cpp /Fo$@ /Fd$(OUT)\library.pdb
+$(OUT)\Neu_Cards.obj: src\Neu_Cards.cpp include\Neutrino\Neutrino.hpp $(OUT)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) /c src\Neu_Cards.cpp /Fo$@ /Fd$(OUT)\library.pdb
+$(LIBRARY): $(OUT)\Neu_Win32.obj $(OUT)\Neu_Cards.obj
+	$(AR) /nologo /OUT:$@ $(OUT)\Neu_Win32.obj $(OUT)\Neu_Cards.obj
+$(OUT)\neutrino_demo.exe: examples\demo.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\demo.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_demo.obj /Fd$(OUT)\neutrino_demo.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_all_controls.exe: examples\test_all_controls.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\test_all_controls.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_all_controls.obj /Fd$(OUT)\neutrino_test_all_controls.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_windows.exe: examples\test_windows.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\test_windows.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_windows.obj /Fd$(OUT)\neutrino_test_windows.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_typed_views.exe: examples\test_typed_views.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\test_typed_views.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_typed_views.obj /Fd$(OUT)\neutrino_test_typed_views.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_smooth_graphics.exe: examples\test_smooth_graphics.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\test_smooth_graphics.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_smooth_graphics.obj /Fd$(OUT)\neutrino_test_smooth_graphics.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_treeview_collapse.exe: examples\test_treeview_collapse.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\test_treeview_collapse.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_treeview_collapse.obj /Fd$(OUT)\neutrino_test_treeview_collapse.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_heavy_data.exe: examples\test_heavy_data.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\test_heavy_data.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_heavy_data.obj /Fd$(OUT)\neutrino_test_heavy_data.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_01_buttons_icons.exe: examples\neutrino_test_01_buttons_icons.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_01_buttons_icons.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_01_buttons_icons.obj /Fd$(OUT)\neutrino_test_01_buttons_icons.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_02_text_inputs.exe: examples\neutrino_test_02_text_inputs.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_02_text_inputs.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_02_text_inputs.obj /Fd$(OUT)\neutrino_test_02_text_inputs.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_03_lists_combo_autoscroll.exe: examples\neutrino_test_03_lists_combo_autoscroll.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_03_lists_combo_autoscroll.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_03_lists_combo_autoscroll.obj /Fd$(OUT)\neutrino_test_03_lists_combo_autoscroll.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_04_listview_typed_data.exe: examples\neutrino_test_04_listview_typed_data.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_04_listview_typed_data.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_04_listview_typed_data.obj /Fd$(OUT)\neutrino_test_04_listview_typed_data.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_05_treeview_collapse.exe: examples\neutrino_test_05_treeview_collapse.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_05_treeview_collapse.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_05_treeview_collapse.obj /Fd$(OUT)\neutrino_test_05_treeview_collapse.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_06_placement_layout_scaling.exe: examples\neutrino_test_06_placement_layout_scaling.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_06_placement_layout_scaling.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_06_placement_layout_scaling.obj /Fd$(OUT)\neutrino_test_06_placement_layout_scaling.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_07_popup_menu_categories.exe: examples\neutrino_test_07_popup_menu_categories.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_07_popup_menu_categories.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_07_popup_menu_categories.obj /Fd$(OUT)\neutrino_test_07_popup_menu_categories.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_08_richtext_code.exe: examples\neutrino_test_08_richtext_code.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_08_richtext_code.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_08_richtext_code.obj /Fd$(OUT)\neutrino_test_08_richtext_code.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_09_readonly_richtext_icons.exe: examples\neutrino_test_09_readonly_richtext_icons.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_09_readonly_richtext_icons.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_09_readonly_richtext_icons.obj /Fd$(OUT)\neutrino_test_09_readonly_richtext_icons.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_10_images_progress_labels.exe: examples\neutrino_test_10_images_progress_labels.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_10_images_progress_labels.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_10_images_progress_labels.obj /Fd$(OUT)\neutrino_test_10_images_progress_labels.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_11_rendering_buffering.exe: examples\neutrino_test_11_rendering_buffering.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_11_rendering_buffering.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_11_rendering_buffering.obj /Fd$(OUT)\neutrino_test_11_rendering_buffering.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_12_scroll_windows_heavy_data.exe: examples\neutrino_test_12_scroll_windows_heavy_data.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_12_scroll_windows_heavy_data.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_12_scroll_windows_heavy_data.obj /Fd$(OUT)\neutrino_test_12_scroll_windows_heavy_data.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_13_swing_swt_controls.exe: examples\neutrino_test_13_swing_swt_controls.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_13_swing_swt_controls.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_13_swing_swt_controls.obj /Fd$(OUT)\neutrino_test_13_swing_swt_controls.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_14_label_offsets_themes.exe: examples\neutrino_test_14_label_offsets_themes.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_14_label_offsets_themes.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_14_label_offsets_themes.obj /Fd$(OUT)\neutrino_test_14_label_offsets_themes.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_15_selection_controls.exe: examples\neutrino_test_15_selection_controls.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_15_selection_controls.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_15_selection_controls.obj /Fd$(OUT)\neutrino_test_15_selection_controls.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_16_value_controls.exe: examples\neutrino_test_16_value_controls.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_16_value_controls.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_16_value_controls.obj /Fd$(OUT)\neutrino_test_16_value_controls.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_17_tabs_toolbar_splitter.exe: examples\neutrino_test_17_tabs_toolbar_splitter.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_17_tabs_toolbar_splitter.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_17_tabs_toolbar_splitter.obj /Fd$(OUT)\neutrino_test_17_tabs_toolbar_splitter.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_18_stage2_scroll_controls.exe: examples\neutrino_test_18_stage2_scroll_controls.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_18_stage2_scroll_controls.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_18_stage2_scroll_controls.obj /Fd$(OUT)\neutrino_test_18_stage2_scroll_controls.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_19_material_beauty.exe: examples\neutrino_test_19_material_beauty.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_19_material_beauty.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_19_material_beauty.obj /Fd$(OUT)\neutrino_test_19_material_beauty.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_20_full_richtext_control.exe: examples\neutrino_test_20_full_richtext_control.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_20_full_richtext_control.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_20_full_richtext_control.obj /Fd$(OUT)\neutrino_test_20_full_richtext_control.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_21_full_richtext_code_control.exe: examples\neutrino_test_21_full_richtext_code_control.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_21_full_richtext_code_control.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_21_full_richtext_code_control.obj /Fd$(OUT)\neutrino_test_21_full_richtext_code_control.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_test_22_cards.exe: examples\neutrino_test_22_cards.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_22_cards.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_22_cards.obj /Fd$(OUT)\neutrino_test_22_cards.pdb /Fe$@ /link /SUBSYSTEM:CONSOLE
+$(OUT)\neutrino_win32_demo.exe: examples\windows\neutrino_win32_demo.cpp examples\common\Neu_TestCommon.hpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\windows\neutrino_win32_demo.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_win32_demo.obj /Fd$(OUT)\neutrino_win32_demo.pdb /Fe$@ /link /SUBSYSTEM:WINDOWS
+
+clean:
+	@if exist "$(OUT)" rmdir /s /q "$(OUT)"

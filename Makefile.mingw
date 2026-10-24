@@ -1,0 +1,112 @@
+# mingw32-make -f Makefile.mingw (Windows cmd.exe)
+CXX = g++
+AR = ar
+BUILD_DIR ?= build-mingw
+CXXFLAGS ?= -O2 -Wall -Wextra
+CPPFLAGS += -Iinclude -DWIN32_LEAN_AND_MEAN -DNOMINMAX -DUNICODE -D_UNICODE -DWINVER=0x0A00 -D_WIN32_WINNT=0x0A00
+LIB = $(BUILD_DIR)/libNeutrino.a
+OBJ = $(BUILD_DIR)/Neu_Win32.o $(BUILD_DIR)/Neu_Cards.o
+EXAMPLES = $(BUILD_DIR)/neutrino_demo.exe $(BUILD_DIR)/neutrino_test_all_controls.exe $(BUILD_DIR)/neutrino_test_windows.exe $(BUILD_DIR)/neutrino_test_typed_views.exe $(BUILD_DIR)/neutrino_test_smooth_graphics.exe $(BUILD_DIR)/neutrino_test_treeview_collapse.exe $(BUILD_DIR)/neutrino_test_heavy_data.exe $(BUILD_DIR)/neutrino_test_01_buttons_icons.exe $(BUILD_DIR)/neutrino_test_02_text_inputs.exe $(BUILD_DIR)/neutrino_test_03_lists_combo_autoscroll.exe $(BUILD_DIR)/neutrino_test_04_listview_typed_data.exe $(BUILD_DIR)/neutrino_test_05_treeview_collapse.exe $(BUILD_DIR)/neutrino_test_06_placement_layout_scaling.exe $(BUILD_DIR)/neutrino_test_07_popup_menu_categories.exe $(BUILD_DIR)/neutrino_test_08_richtext_code.exe $(BUILD_DIR)/neutrino_test_09_readonly_richtext_icons.exe $(BUILD_DIR)/neutrino_test_10_images_progress_labels.exe $(BUILD_DIR)/neutrino_test_11_rendering_buffering.exe $(BUILD_DIR)/neutrino_test_12_scroll_windows_heavy_data.exe $(BUILD_DIR)/neutrino_test_13_swing_swt_controls.exe $(BUILD_DIR)/neutrino_test_14_label_offsets_themes.exe $(BUILD_DIR)/neutrino_test_15_selection_controls.exe $(BUILD_DIR)/neutrino_test_16_value_controls.exe $(BUILD_DIR)/neutrino_test_17_tabs_toolbar_splitter.exe $(BUILD_DIR)/neutrino_test_18_stage2_scroll_controls.exe $(BUILD_DIR)/neutrino_test_19_material_beauty.exe $(BUILD_DIR)/neutrino_test_20_full_richtext_control.exe $(BUILD_DIR)/neutrino_test_21_full_richtext_code_control.exe $(BUILD_DIR)/neutrino_test_22_cards.exe $(BUILD_DIR)/neutrino_win32_demo.exe
+all: $(LIB) $(EXAMPLES)
+library: $(LIB)
+$(BUILD_DIR):
+	if not exist "$(BUILD_DIR)" mkdir "$(BUILD_DIR)"
+$(BUILD_DIR)/Neu_Win32.o: src/win32/Neu_Win32.cpp include/Neutrino/Neutrino.hpp | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 -c $< -o $@
+$(BUILD_DIR)/Neu_Cards.o: src/Neu_Cards.cpp include/Neutrino/Neutrino.hpp | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 -c $< -o $@
+$(LIB): $(OBJ)
+	$(AR) rcs $@ $^
+$(BUILD_DIR)/neutrino_demo.exe: examples/demo.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_all_controls.exe: examples/test_all_controls.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_windows.exe: examples/test_windows.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_typed_views.exe: examples/test_typed_views.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_smooth_graphics.exe: examples/test_smooth_graphics.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_treeview_collapse.exe: examples/test_treeview_collapse.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_heavy_data.exe: examples/test_heavy_data.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_01_buttons_icons.exe: examples/neutrino_test_01_buttons_icons.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_02_text_inputs.exe: examples/neutrino_test_02_text_inputs.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_03_lists_combo_autoscroll.exe: examples/neutrino_test_03_lists_combo_autoscroll.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_04_listview_typed_data.exe: examples/neutrino_test_04_listview_typed_data.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_05_treeview_collapse.exe: examples/neutrino_test_05_treeview_collapse.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_06_placement_layout_scaling.exe: examples/neutrino_test_06_placement_layout_scaling.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_07_popup_menu_categories.exe: examples/neutrino_test_07_popup_menu_categories.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_08_richtext_code.exe: examples/neutrino_test_08_richtext_code.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_09_readonly_richtext_icons.exe: examples/neutrino_test_09_readonly_richtext_icons.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_10_images_progress_labels.exe: examples/neutrino_test_10_images_progress_labels.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_11_rendering_buffering.exe: examples/neutrino_test_11_rendering_buffering.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_12_scroll_windows_heavy_data.exe: examples/neutrino_test_12_scroll_windows_heavy_data.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_13_swing_swt_controls.exe: examples/neutrino_test_13_swing_swt_controls.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_14_label_offsets_themes.exe: examples/neutrino_test_14_label_offsets_themes.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_15_selection_controls.exe: examples/neutrino_test_15_selection_controls.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_16_value_controls.exe: examples/neutrino_test_16_value_controls.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_17_tabs_toolbar_splitter.exe: examples/neutrino_test_17_tabs_toolbar_splitter.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_18_stage2_scroll_controls.exe: examples/neutrino_test_18_stage2_scroll_controls.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_19_material_beauty.exe: examples/neutrino_test_19_material_beauty.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_20_full_richtext_control.exe: examples/neutrino_test_20_full_richtext_control.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_21_full_richtext_code_control.exe: examples/neutrino_test_21_full_richtext_code_control.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_test_22_cards.exe: examples/neutrino_test_22_cards.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 $(LDLIBS) -o $@
+
+$(BUILD_DIR)/neutrino_win32_demo.exe: examples/windows/neutrino_win32_demo.cpp examples/common/Neu_TestCommon.hpp $(LIB)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++17 $< $(LIB) $(LDFLAGS) -luser32 -lgdi32 -lcomctl32 -mwindows -municode $(LDLIBS) -o $@
+
+clean:
+	if exist "$(BUILD_DIR)" rmdir /s /q "$(BUILD_DIR)"
+.PHONY: all library clean
