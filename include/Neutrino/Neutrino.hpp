@@ -576,15 +576,23 @@ class Neu_PopWindowMenu : public Neu_Placement {
 public:
     using Neu_Placement::Neu_Placement;
     const char* className() const override { return "Neu_PopWindowMenu"; }
-    void setCategories(const std::vector<std::string>& categories) { categories_ = categories; requestRedraw(); }
-    void setItems(const std::string& category, const std::vector<std::string>& items) { items_[category] = items; requestRedraw(); }
+    void setCategories(const std::vector<std::string>& categories) { categories_ = categories; selectedCategory_ = 0; hoveredCategory_ = highlightedItem_ = -1; requestRedraw(); }
+    void setItems(const std::string& category, const std::vector<std::string>& items) { items_[category] = items; highlightedItem_ = -1; requestRedraw(); }
+    // Zero fills the available height before continuing in the next column.
+    // A positive value limits rows per column (still capped to the available height).
+    void setSubmenuRowsPerColumn(int rows) { submenuRowsPerColumn_ = std::max(0, rows); highlightedItem_ = -1; requestRedraw(); }
+    int selectedCategoryIndex() const { return categories_.empty() ? -1 : selectedCategory_; }
+    int highlightedCategoryIndex() const { return hoveredCategory_; }
+    int highlightedItemIndex() const { return highlightedItem_; }
+    Neu_Rect submenuItemBounds(size_t index) const;
+    std::vector<Neu_Rect> submenuColumnDividers() const;
 
     // Popup visibility helpers. The menu remains visible by default for
     // backwards compatibility with existing demos; applications can hide it
     // after construction and open it explicitly through show()/showAt().
     void show() { if (!visible_) { visible_ = true; requestRedraw(); } }
     void showAt(int x, int y) { layout_.left = x; layout_.top = y; show(); }
-    void hide() { if (visible_) { visible_ = false; requestRedraw(); } }
+    void hide() { hoveredCategory_ = highlightedItem_ = -1; if (visible_) { visible_ = false; requestRedraw(); } }
     void toggle() { if (visible_) { hide(); } else { show(); } }
     bool isVisible() const { return visible_; }
 
@@ -594,6 +602,11 @@ private:
     std::vector<std::string> categories_;
     std::map<std::string, std::vector<std::string>> items_;
     int selectedCategory_{0};
+    int hoveredCategory_{-1};
+    int highlightedItem_{-1};
+    int submenuRowsPerColumn_{0};
+    int submenuRowCount() const;
+    size_t submenuItemCount() const;
 };
 
 using Neu_PopupWindowMenu = Neu_PopWindowMenu;
@@ -1009,6 +1022,9 @@ public:
     // Exactly three times the menu font's pixel height. Content is not reflowed.
     int wideBarHeight() const;
     Neu_Rect neutrinoMenuCloseBounds() const;
+    // false (default): 16-pixel red circle; true: themed "Close Menu" button.
+    void setNeutrinoMenuUseNormalCloseButton(bool enabled);
+    bool neutrinoMenuUsesNormalCloseButton() const { return menuUseNormalCloseButton_; }
 private:
     Neu_Application& app_;
     Display* display_{nullptr};
@@ -1046,6 +1062,8 @@ private:
     bool wideBarPressed_{false};
     bool menuClosePressed_{false};
     bool menuSessionActive_{false};
+    bool menuUseNormalCloseButton_{false};
+    Neu_Button menuCloseButton_{Neu_Layout{}};
     void layoutNeutrinoMenu();
     void drawNeutrinoMenu(Drawable target);
     void finishNeutrinoMenuSession();

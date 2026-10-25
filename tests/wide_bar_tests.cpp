@@ -67,7 +67,7 @@ static void render(Neu_Window& w, bool open)
     HBITMAP bitmap = CreateCompatibleBitmap(screen, w.width(), w.height());
     auto old = SelectObject(dc, bitmap);
     w.paint(dc);
-    if (open) {
+    if (open && !w.neutrinoMenuUsesNormalCloseButton()) {
         const auto r = w.neutrinoMenuCloseBounds();
         check(GetPixel(dc, r.x + r.width / 2, r.y + 5) == RGB(220,35,45), "close button red circle");
         bool white = false;
@@ -75,11 +75,120 @@ static void render(Neu_Window& w, bool open)
             for (int x = r.x + r.width/3; x < r.x + 2*r.width/3; ++x)
                 white |= GetPixel(dc, x, y) == RGB(255,255,255);
         check(white, "close button white X");
+    } else if (open) {
+        const auto r = w.neutrinoMenuCloseBounds();
+        check(GetPixel(dc, r.x + r.width/2, r.y + 5) != RGB(220,35,45), "normal button uses theme instead of red circle");
+        bool text = false;
+        const auto color = w.theme().text;
+        for (int y = r.y + 6; y < r.y + r.height - 6; ++y)
+            for (int x = r.x + 6; x < r.x + r.width - 6; ++x)
+                text |= GetPixel(dc, x, y) == RGB(color.r, color.g, color.b);
+        check(text, "normal Close Menu button renders themed text");
     }
     SelectObject(dc, old);
     DeleteObject(bitmap);
     DeleteDC(dc);
     ReleaseDC(w.xid(), screen);
+}
+static void testHoverColumns(Neu_Window& w, const std::shared_ptr<Neu_PopWindowMenu>& menu)
+{
+    menu->setCategories({"File", "Edit"});
+    menu->setItems("File", {"A", "B", "C", "D", "E", "F", "G"});
+    menu->setItems("Edit", {"Undo", "Redo"});
+    menu->setSubmenuRowsPerColumn(3);
+    w.openNeutrinoMenu();
+    const auto m = menu->bounds();
+    check(!w.neutrinoMenuUsesNormalCloseButton() && w.neutrinoMenuCloseBounds().width == 16, "default circle is 40 percent of original diameter");
+    click(w, 20, m.y + 44);
+    check(menu->selectedCategoryIndex() == 0, "category click does not switch submenu");
+    check(menu->highlightedCategoryIndex() == -1, "category click does not highlight a row");
+    int callbacks = 0;
+    Neu_Callbacks cb; cb.onClick = countClick; cb.userData = &callbacks; menu->setCallbacks(cb);
+    mouse(w, WM_MOUSEMOVE, 20, m.y + 44);
+    check(menu->selectedCategoryIndex() == 1, "hover switches to Edit submenu without click");
+    check(menu->highlightedCategoryIndex() == 1, "category highlight follows hover");
+    mouse(w, WM_MOUSEMOVE, 20, m.y + 2);
+    check(menu->selectedCategoryIndex() == 1, "sidebar top padding does not select first category");
+    mouse(w, WM_MOUSEMOVE, 20, m.y + 20);
+    check(menu->selectedCategoryIndex() == 0, "hover switches back to File");
+    const auto a = menu->submenuItemBounds(0), b = menu->submenuItemBounds(1);
+    const auto d = menu->submenuItemBounds(3), g = menu->submenuItemBounds(6);
+    check(a.x == b.x && b.y == a.y + 24, "items fill down a column");
+    check(d.x > a.x && d.y == a.y && g.x > d.x && g.y == a.y, "next columns continue left to right at top");
+    check(menu->submenuItemBounds(7).width == 0, "out of range item has empty bounds");
+    const auto dividers = menu->submenuColumnDividers();
+    check(dividers.size() == 2, "three columns have two separators");
+    for (const auto& line : dividers) {
+        check(line.y >= m.y + m.height * 0.1 && line.height <= m.height * 0.8,
+              "divider starts at ten percent and is no longer than eighty percent");
+        check(line.y + line.height <= m.y + m.height * 0.9, "divider ends by ninety percent");
+    }
+    mouse(w, WM_MOUSEMOVE, b.x + 10, b.y + 12);
+    check(menu->highlightedItemIndex() == 1 && callbacks == 0, "submenu hover highlights without activating command");
+    check(menu->highlightedCategoryIndex() == -1, "category highlight clears when pointer enters submenu");
+    mouse(w, WM_LBUTTONDOWN, a.x + 10, a.y + 12);
+    check(menu->highlightedItemIndex() == 1, "button down does not change hover highlight");
+    mouse(w, WM_LBUTTONUP, a.x + 10, a.y + 12);
+    const auto e = menu->submenuItemBounds(4);
+    mouse(w, WM_MOUSEMOVE, e.x + 10, e.y + 12);
+    check(menu->highlightedItemIndex() == 4, "hover works in subsequent columns");
+    mouse(w, WM_MOUSEMOVE, dividers[0].x, dividers[0].y + 5);
+    check(menu->highlightedItemIndex() == -1, "divider gap has no item highlight");
+    mouse(w, WM_MOUSEMOVE, b.x + 10, b.y + 12);
+    SendMessageW(w.xid(), WM_MOUSELEAVE, 0, 0);
+    check(menu->highlightedItemIndex() == -1, "leaving window clears submenu highlight");
+    menu->setEnabled(false);
+    mouse(w, WM_MOUSEMOVE, 20, m.y + 44);
+    check(menu->selectedCategoryIndex() == 0, "disabled menu ignores category hover");
+    menu->setEnabled(true);
+    for (const auto& theme : {Neu_Theme::MaterialDark(), Neu_Theme::MaterialLight()}) {
+        w.setTheme(theme);
+        HDC screen = GetDC(w.xid()), dc = CreateCompatibleDC(screen);
+        HBITMAP bitmap = CreateCompatibleBitmap(screen, w.width(), w.height());
+        auto old = SelectObject(dc, bitmap); w.paint(dc);
+        const auto line = dividers.front();
+        check(GetPixel(dc, line.x, line.y + 1) == RGB(theme.border.r, theme.border.g, theme.border.b), "divider uses active theme border color");
+        check(GetPixel(dc, line.x, line.y - 1) != RGB(theme.border.r, theme.border.g, theme.border.b), "divider has top inset");
+        SelectObject(dc, old); DeleteObject(bitmap); DeleteDC(dc); ReleaseDC(w.xid(), screen);
+    }
+    w.setTheme(Neu_Theme::MaterialDark());
+    mouse(w, WM_MOUSEMOVE, e.x + 10, e.y + 12);
+    capture(w, "hover-columns-circle");
+    w.setNeutrinoMenuUseNormalCloseButton(true);
+    check(w.neutrinoMenuUsesNormalCloseButton() && w.neutrinoMenuCloseBounds().width == 120, "boolean selects normal Close Menu button");
+    render(w, true); capture(w, "hover-columns-normal");
+    auto close = w.neutrinoMenuCloseBounds();
+    mouse(w, WM_LBUTTONDOWN, close.x + 20, close.y + 15);
+    mouse(w, WM_LBUTTONUP, 20, m.y + 100);
+    check(w.neutrinoMenuOpen(), "drag off normal button cancels close");
+    click(w, close.x + 20, close.y + 15);
+    check(w.wideBarVisible(), "normal button closes menu and restores bar");
+    w.openNeutrinoMenu();
+    w.setTheme(Neu_Theme::MaterialLight());
+    render(w, true); capture(w, "hover-columns-normal-light");
+    w.setTheme(Neu_Theme::MaterialDark());
+    close = w.neutrinoMenuCloseBounds();
+    mouse(w, WM_LBUTTONDOWN, close.x + 20, close.y + 15);
+    w.setNeutrinoMenuUseNormalCloseButton(false);
+    mouse(w, WM_LBUTTONUP, close.x + 20, close.y + 15);
+    check(w.neutrinoMenuOpen(), "switching button style cancels pending close");
+    std::vector<std::string> many(55, "Item"); menu->setItems("File", many);
+    menu->setSubmenuRowsPerColumn(0);
+    const int rows = std::max(1, (m.height-20)/24);
+    check(menu->submenuItemBounds(rows).x > menu->submenuItemBounds(0).x, "automatic row count wraps to next column");
+    for (size_t i=0; i<many.size(); ++i) {
+        const auto item = menu->submenuItemBounds(i);
+        check(item.y >= m.y && item.y + item.height <= m.y + m.height && item.x + item.width <= m.x + m.width, "automatic grid stays inside menu");
+    }
+    SendMessageW(w.xid(), WM_SIZE, SIZE_RESTORED, MAKELPARAM(320, 180));
+    mouse(w, WM_MOUSEMOVE, 20, 80);
+    check(menu->submenuItemBounds(4).x > menu->submenuItemBounds(0).x, "shorter window reflows columns on resize");
+    SendMessageW(w.xid(), WM_SIZE, SIZE_RESTORED, MAKELPARAM(800, 600));
+    menu->setCategories({});
+    check(menu->selectedCategoryIndex() == -1 && menu->submenuColumnDividers().empty(), "empty categories have no selection or dividers");
+    w.closeNeutrinoMenu();
+    menu->setCategories({"File", "Edit"}); menu->setItems("File", {"Open", "Save"}); menu->setSubmenuRowsPerColumn(0);
+    menu->setCallbacks(Neu_Callbacks{});
 }
 int main()
 {
@@ -104,6 +213,7 @@ int main()
         check(w.wideBarHeight() == 48, "toolbar does not enlarge font-sized bar");
         w.setWideBarReferenceHeight(60);
         check(w.wideBarHeight() == 48, "legacy reference does not enlarge font-sized bar");
+        testHoverColumns(w, menu);
         int clicks = 0;
         auto button = std::make_shared<InputProbe>(Neu_Layout{200, 200, 200, 50});
         button->setText("Underlying button");

@@ -9,22 +9,22 @@
     {
       "path": "docs/WIDE_BAR.md",
       "change": "added",
-      "sha256": "37442e7c18f65561762d149e08defc9b54be57653240c9f649e2adf689f00d86"
+      "sha256": "bd2309775b1bd4d5ac71b983da9b2f755dde50b2fc1f7bca2a27ff6a96e32092"
     },
     {
       "path": "examples/neutrino_test_23_wide_bar.cpp",
       "change": "added",
-      "sha256": "8effd877da0972ec4aede3c9843eaeea8ec124b8966612227dfe0848e6757b8b"
+      "sha256": "7a7549558bbcc8c96cb2046d65590ccfe11bc520e90b21865aa4155c0bbfb2c3"
     },
     {
       "path": "examples/neutrino_test_24_main_window_menu.cpp",
       "change": "added",
-      "sha256": "0d2418e1f564ff5529f60012f82f97705645f2fb0e14db8588d6d41af6f43f15"
+      "sha256": "a6b0a712cae8133b0d143789db7c27b6d5309fcc0737e4d7e55b6563a4d4c059"
     },
     {
       "path": "include/Neutrino/Neutrino.hpp",
       "change": "modified",
-      "sha256": "14644db9fcaabb69bddf65b50d5f060a15a2ae22f7bae9d6a94752d071f09111"
+      "sha256": "c6f9b4103da92031069469775ee4e8fddb84de751d5543cf2fbefd189c983414"
     },
     {
       "path": "Makefile.mingw",
@@ -64,12 +64,12 @@
     {
       "path": "src/win32/Neu_Win32.cpp",
       "change": "modified",
-      "sha256": "181da49cfa70a3f658a58a257db02d64420178de1c9bc36a0f4d4f08c9b8d669"
+      "sha256": "66e0dbf81c92931cd253a5490b89eae671338764e474557c38e3fca8d8dc07bb"
     },
     {
       "path": "tests/wide_bar_tests.cpp",
       "change": "added",
-      "sha256": "ddbe72529590737916f5070297fc4eec5d263a0d7835addd2d19023d2c149aa2"
+      "sha256": "c0b4dc83f8870a788a7be04020e031f181ed8f2b5e5740b88bc112d2dfad482c"
     },
     {
       "path": "tools/package_wide_bar.py",
@@ -84,7 +84,7 @@
     {
       "path": "validation/build-debug.log",
       "change": "added",
-      "sha256": "8c05b8fd35a21b54b099c9aec7b31a7cec828df64e135559b4ef413650ff937c"
+      "sha256": "5226de53e3f2696ff9ad3a9796302591df67e78b6e4db3bcfa7c978ad1d94e29"
     },
     {
       "path": "validation/build-nmake.log",
@@ -94,7 +94,7 @@
     {
       "path": "validation/build-release.log",
       "change": "added",
-      "sha256": "1dc34737782cf42f7ad760e502d10856be08ae66918a6ffc8b73ab8376b0b5bc"
+      "sha256": "750274e2403c2655840cb71095cdc9543255635e947f83ed492ecd05104f26e1"
     },
     {
       "path": "validation/build-solution.log",
@@ -104,12 +104,27 @@
     {
       "path": "validation/build-win32.log",
       "change": "added",
-      "sha256": "beb6ea77e94d8823dbe256c440bfd4526582b7edd8d0494f595a3a75355e6635"
+      "sha256": "bb9bfadd4f58f9199f0d21b3ca06d56b097cf46d92ecd0420025b8711c8091dd"
+    },
+    {
+      "path": "validation/hover-columns-circle.png",
+      "change": "added",
+      "sha256": "d3c02295f48bccdf009c0aecb1b2212285f31b57b2281a0e3876de27f187b946"
+    },
+    {
+      "path": "validation/hover-columns-normal-light.png",
+      "change": "added",
+      "sha256": "ccaaec0a8065e1df491215e7896be2b61e82994a830965e4460d5ff282b463c7"
+    },
+    {
+      "path": "validation/hover-columns-normal.png",
+      "change": "added",
+      "sha256": "811faef940bf43b199e10618751f53b1467bee49b631b5fa318d1d29195cbadb"
     },
     {
       "path": "validation/menu-overlay.png",
       "change": "added",
-      "sha256": "a2686c2fe5e7cf7564b0eecc49ae9dc3eeea058c672d63ed0ffd33e0275ad521"
+      "sha256": "4801364f3c2180004c7d9b580c89a18a253379ddfbbf08747f6b9802b5be34b7"
     },
     {
       "path": "validation/wide-bar.png",
@@ -119,7 +134,7 @@
     {
       "path": "WIDE_BAR_VERIFICATION.md",
       "change": "added",
-      "sha256": "076b589c2182e6807a2a0bf9b68fd9edde3c5151f68af36026a31060bfb35714"
+      "sha256": "b1d1433df483525fa81ce79a1a4f64e6d8be533bc7049e72e46d766220f66bd1"
     }
   ]
 }

@@ -3715,11 +3715,61 @@ void Neu_Placement::handleXEvent(XEvent& ev)
     Neu_Control::handleXEvent(ev);
 }
 
+int Neu_PopWindowMenu::submenuRowCount() const
+{
+    const int available = std::max(1, (bounds().height - 20) / 24);
+    return submenuRowsPerColumn_ > 0 ? std::min(available, submenuRowsPerColumn_) : available;
+}
+
+size_t Neu_PopWindowMenu::submenuItemCount() const
+{
+    if (selectedCategory_ < 0 || selectedCategory_ >= static_cast<int>(categories_.size())) return 0;
+    const auto it = items_.find(categories_[static_cast<size_t>(selectedCategory_)]);
+    return it == items_.end() ? 0 : it->second.size();
+}
+
+Neu_Rect Neu_PopWindowMenu::submenuItemBounds(size_t index) const
+{
+    const size_t count = submenuItemCount();
+    if (index >= count) return {};
+    const auto r = bounds();
+    const int sidebar = std::max(1, std::min(180, r.width / 3));
+    const int rows = submenuRowCount();
+    const size_t columns = (count + rows - 1) / rows;
+    const size_t column = index / rows;
+    const int left = r.x + sidebar + 8;
+    const int available = std::max(0, r.width - sidebar - 16);
+    const int columnLeft = left + static_cast<int>(column * available / columns);
+    const int columnRight = left + static_cast<int>((column + 1) * available / columns);
+    return {columnLeft + 4, r.y + 10 + static_cast<int>(index % rows) * 24,
+            std::max(0, columnRight - columnLeft - 8), std::min(24, std::max(0, r.height - 10 - static_cast<int>(index % rows) * 24))};
+}
+
+std::vector<Neu_Rect> Neu_PopWindowMenu::submenuColumnDividers() const
+{
+    const auto r = bounds();
+    const int sidebar = std::max(1, std::min(180, r.width / 3));
+    const size_t count = submenuItemCount();
+    const int rows = submenuRowCount();
+    const size_t columns = count ? (count + rows - 1) / rows : 0;
+    const int top = r.y + static_cast<int>(std::ceil(r.height * 0.1));
+    const int bottom = r.y + static_cast<int>(std::floor(r.height * 0.9));
+    std::vector<Neu_Rect> dividers;
+    for (size_t column = 1; column < columns; ++column) {
+        const int x = r.x + sidebar + 8 + static_cast<int>(column * std::max(0, r.width - sidebar - 16) / columns);
+        dividers.push_back({x, top, 1, std::max(0, bottom - top)});
+    }
+    return dividers;
+}
+
 void Neu_PopWindowMenu::draw(Display* d, Drawable drawable, GC gc, const Neu_Theme& theme)
 {
     Neu_Control::draw(d, drawable, gc, theme);
     const Neu_Rect r = bounds();
     const int sidebarWidth = neuMaxIntWin32(1, neuMinIntWin32(180, r.width / 3));
+
+    const int saved = SaveDC(drawable);
+    IntersectClipRect(drawable, r.x, r.y, r.x + r.width, r.y + r.height);
 
     fillRound(drawable,
               Neu_Rect{r.x + 4, r.y + 4, neuMaxIntWin32(1, sidebarWidth - 8), neuMaxIntWin32(1, r.height - 8)},
@@ -3727,60 +3777,91 @@ void Neu_PopWindowMenu::draw(Display* d, Drawable drawable, GC gc, const Neu_The
               rgb(theme.hover),
               rgb(theme.border));
 
+    const int sidebarSaved = SaveDC(drawable);
+    IntersectClipRect(drawable, r.x + 4, r.y + 4, r.x + sidebarWidth - 4, r.y + r.height - 4);
     int y = r.y + 14;
     for (int index = 0; index < static_cast<int>(categories_.size()); ++index) {
-        if (index == selectedCategory_) {
+        if (index == hoveredCategory_) {
             fillRound(drawable,
                       Neu_Rect{r.x + 8, y - 4, neuMaxIntWin32(1, sidebarWidth - 16), 22},
                       neuMaxIntWin32(2, theme.radius - 4),
-                      rgb(theme.pressed),
+                      rgb(theme.highlight),
                       rgb(theme.focus));
         }
         drawText(d, drawable, gc, theme, categories_[static_cast<size_t>(index)], r.x + 14, y);
         y += 24;
     }
+    RestoreDC(drawable, sidebarSaved);
 
     if (!categories_.empty()) {
         selectedCategory_ = neuMaxIntWin32(0, neuMinIntWin32(selectedCategory_, static_cast<int>(categories_.size()) - 1));
         auto it = items_.find(categories_[static_cast<size_t>(selectedCategory_)]);
         if (it != items_.end()) {
-            y = r.y + 14;
-            const int itemLeft = r.x + sidebarWidth + 18;
-            const int itemWidth = neuMaxIntWin32(1, r.width - sidebarWidth - 28);
-            int saved = SaveDC(drawable);
-            IntersectClipRect(drawable, itemLeft, r.y + 6, r.x + r.width - 8, r.y + r.height - 8);
-            for (const auto& item : it->second) {
-                const std::string visible = truncateTextToWidth(d, drawable, gc, theme, item, itemWidth);
-                drawText(d, drawable, gc, theme, visible, itemLeft, y);
-                y += 24;
-                if (y > r.y + r.height - 8) {
-                    break;
-                }
+            for (size_t index = 0; index < it->second.size(); ++index) {
+                const auto item = submenuItemBounds(index);
+                const int itemSaved = SaveDC(drawable);
+                IntersectClipRect(drawable, item.x, item.y, item.x + item.width, item.y + item.height);
+                if (static_cast<int>(index) == highlightedItem_)
+                    fillRound(drawable, item, std::max(2, theme.radius - 4), rgb(theme.highlight), rgb(theme.focus));
+                drawText(d, drawable, gc, theme,
+                         truncateTextToWidth(d, drawable, gc, theme, it->second[index], std::max(0, item.width - 12)), item.x + 6, item.y + 4);
+                RestoreDC(drawable, itemSaved);
             }
-            RestoreDC(drawable, saved);
         }
     }
 
+    HBRUSH dividerBrush = CreateSolidBrush(rgb(theme.border));
+    for (const auto& divider : submenuColumnDividers()) {
+        RECT line{divider.x, divider.y, divider.x + divider.width, divider.y + divider.height};
+        FillRect(drawable, &line, dividerBrush);
+    }
+    DeleteObject(dividerBrush);
+    for (const auto& child : children())
+        if (child && child->visible()) child->draw(d, drawable, gc, theme);
+    RestoreDC(drawable, saved);
     drawHintPopup(d, drawable, gc, theme);
 }
 
 void Neu_PopWindowMenu::handleXEvent(XEvent& ev)
 {
-    if (!visible_) {
+    if (!visible_ || !enabled_) {
         return;
     }
 
-    const bool mouseRelease = ev.message == WM_LBUTTONUP || ev.message == WM_LBUTTONDOWN;
-    if (mouseRelease && contains(ev.x, ev.y)) {
+    if (ev.message == WM_MOUSELEAVE || ev.message == WM_CANCELMODE) {
+        hoveredCategory_ = highlightedItem_ = -1;
+        requestRedraw();
+    }
+    if (ev.message == WM_MOUSEMOVE) {
         const Neu_Rect r = bounds();
         const int sidebarWidth = neuMaxIntWin32(1, neuMinIntWin32(180, r.width / 3));
-        if (ev.x >= r.x && ev.x < r.x + sidebarWidth) {
-            const int row = (ev.y - (r.y + 10)) / 24;
-            if (row >= 0 && row < static_cast<int>(categories_.size())) {
-                selectedCategory_ = row;
-                requestRedraw();
-                return;
+        int category = -1, item = -1;
+        if (contains(ev.x, ev.y) && ev.x >= r.x + 8 && ev.x < r.x + sidebarWidth - 8 && ev.y >= r.y + 10) {
+            const int row = (ev.y - r.y - 10) / 24;
+            if (row < static_cast<int>(categories_.size())) category = row;
+        }
+        if (category >= 0) selectedCategory_ = category;
+        else if (contains(ev.x, ev.y)) {
+            for (size_t index = 0; index < submenuItemCount(); ++index) {
+                const auto b = submenuItemBounds(index);
+                if (ev.x >= b.x && ev.x < b.x + b.width && ev.y >= b.y && ev.y < b.y + b.height) {
+                    item = static_cast<int>(index);
+                    break;
+                }
             }
+        }
+        if (hoveredCategory_ != category || highlightedItem_ != item) {
+            hoveredCategory_ = category;
+            highlightedItem_ = item;
+            requestRedraw();
+        }
+    }
+    // Clicking a category does not navigate or trigger the menu callback.
+    if ((ev.message == WM_LBUTTONDOWN || ev.message == WM_LBUTTONUP) && contains(ev.x, ev.y)) {
+        const auto r = bounds();
+        if (ev.x < r.x + std::max(1, std::min(180, r.width / 3))) {
+            pressed_ = false;
+            return;
         }
     }
 
@@ -5267,6 +5348,9 @@ Neu_Window::Neu_Window(Neu_Application& app, int width, int height, const std::s
       theme_(Neu_Theme::MaterialDark())
 {
     Neu_ApplyThemeRenderingOptions(theme_);
+    menuCloseButton_.setText("Close Menu");
+    menuCloseButton_.setTextAlignment(Neu_TextAlignment::Center);
+    menuCloseButton_.setParent(this);
 }
 
 Neu_Window::~Neu_Window()
@@ -5307,12 +5391,31 @@ int Neu_Window::wideBarHeight() const
 Neu_Rect Neu_Window::neutrinoMenuCloseBounds() const
 {
     const int strip = std::min(height_, wideBarHeight());
-    const int diameter = std::max(1, std::min(40, std::min(width_, strip) - 8));
+    if (menuUseNormalCloseButton_) {
+        const int width = std::max(1, std::min(120, width_ - 24));
+        const int height = std::max(1, std::min(32, strip - 12));
+        return {std::max(0, width_ - width - 12), std::max(0, (strip - height) / 2), width, height};
+    }
+    const int diameter = std::max(1, std::min(16, std::min(width_, strip) - 8));
     return {std::max(0, width_ - diameter - 12), std::max(0, (strip - diameter) / 2), diameter, diameter};
+}
+
+void Neu_Window::setNeutrinoMenuUseNormalCloseButton(bool enabled)
+{
+    if (menuUseNormalCloseButton_ == enabled) return;
+    menuUseNormalCloseButton_ = enabled;
+    menuClosePressed_ = false;
+    XEvent cancel{};
+    cancel.message = WM_CANCELMODE;
+    menuCloseButton_.handleXEvent(cancel);
+    layoutNeutrinoMenu();
+    requestRedraw();
 }
 
 void Neu_Window::layoutNeutrinoMenu()
 {
+    const auto r = neutrinoMenuCloseBounds();
+    menuCloseButton_.setLayout(Neu_Layout{r.x, r.y, r.width, r.height});
     if (neutrinoMenu_)
         neutrinoMenu_->setLayout(Neu_Layout{0, wideBarHeight(), width_, std::max(1, height_ - wideBarHeight())});
 }
@@ -5320,11 +5423,11 @@ void Neu_Window::layoutNeutrinoMenu()
 void Neu_Window::openNeutrinoMenu()
 {
     if (!neutrinoMenu_ || !window_ || app_.mainWindow() != this) return;
+    XEvent cancel{};
+    cancel.message = WM_CANCELMODE;
     if (!menuSessionActive_) {
         menuPreviousFocus_ = focusedControl_;
         if (auto combo = dynamic_cast<Neu_ComboBox*>(focusedControl_)) combo->closeDropDown();
-        XEvent cancel{};
-        cancel.message = WM_CANCELMODE;
         if (captureControl_) captureControl_->handleXEvent(cancel);
         if (hoveredControl_) hoveredControl_->handleXEvent(cancel);
         captureControl_ = nullptr;
@@ -5335,6 +5438,7 @@ void Neu_Window::openNeutrinoMenu()
     }
     wideBarPressed_ = false;
     menuClosePressed_ = false;
+    menuCloseButton_.handleXEvent(cancel);
     layoutNeutrinoMenu();
     neutrinoMenu_->show();
     requestRedraw();
@@ -5345,6 +5449,7 @@ void Neu_Window::finishNeutrinoMenuSession()
     if (!menuSessionActive_) return;
     XEvent cancel{};
     cancel.message = WM_CANCELMODE;
+    menuCloseButton_.handleXEvent(cancel);
     if (captureControl_) captureControl_->handleXEvent(cancel);
     if (hoveredControl_) hoveredControl_->handleXEvent(cancel);
     captureControl_ = nullptr;
@@ -5383,24 +5488,28 @@ void Neu_Window::drawNeutrinoMenu(Drawable target)
         neutrinoMenu_->draw(nullptr, target, target, theme_);
         RestoreDC(target, saved);
         const auto r = neutrinoMenuCloseBounds();
-        HBRUSH red = CreateSolidBrush(RGB(220, 35, 45));
-        auto oldBrush = SelectObject(target, red);
-        auto oldPen = SelectObject(target, GetStockObject(NULL_PEN));
-        Ellipse(target, r.x, r.y, r.x + r.width, r.y + r.height);
-        SelectObject(target, oldBrush);
-        SelectObject(target, oldPen);
-        DeleteObject(red);
-        HPEN white = CreatePen(PS_SOLID, 3, RGB(255, 255, 255));
-        oldPen = SelectObject(target, white);
-        const int inset = std::max(1, r.width / 3);
-        MoveToEx(target, r.x + inset, r.y + inset, nullptr);
-        LineTo(target, r.x + r.width - inset, r.y + r.height - inset);
-        MoveToEx(target, r.x + r.width - inset, r.y + inset, nullptr);
-        LineTo(target, r.x + inset, r.y + r.height - inset);
-        SelectObject(target, oldPen);
-        DeleteObject(white);
+        if (menuUseNormalCloseButton_) {
+            menuCloseButton_.draw(nullptr, target, target, theme_);
+        } else {
+            HBRUSH red = CreateSolidBrush(RGB(220, 35, 45));
+            auto oldBrush = SelectObject(target, red);
+            auto oldPen = SelectObject(target, GetStockObject(NULL_PEN));
+            Ellipse(target, r.x, r.y, r.x + r.width, r.y + r.height);
+            SelectObject(target, oldBrush);
+            SelectObject(target, oldPen);
+            DeleteObject(red);
+            HPEN white = CreatePen(PS_SOLID, 1, RGB(255, 255, 255));
+            oldPen = SelectObject(target, white);
+            const int inset = std::max(1, r.width / 3);
+            MoveToEx(target, r.x + inset, r.y + inset, nullptr);
+            LineTo(target, r.x + r.width - inset, r.y + r.height - inset);
+            MoveToEx(target, r.x + r.width - inset, r.y + inset, nullptr);
+            LineTo(target, r.x + inset, r.y + r.height - inset);
+            SelectObject(target, oldPen);
+            DeleteObject(white);
+        }
     }
-    RECT title{16, 0, std::max(16, width_ - (open ? 64 : 16)), std::min(height_, wideBarHeight())};
+    RECT title{16, 0, std::max(16, open ? neutrinoMenuCloseBounds().x - 8 : width_ - 16), std::min(height_, wideBarHeight())};
     auto oldFont = SelectObject(target, uiFont());
     SetBkMode(target, TRANSPARENT);
     SetTextColor(target, rgb(theme_.text));
@@ -5419,6 +5528,7 @@ bool Neu_Window::handleNeutrinoMenuEvent(XEvent& ev)
     layoutNeutrinoMenu();
     if (ev.message == WM_CANCELMODE || ev.message == WM_CAPTURECHANGED) {
         wideBarPressed_ = menuClosePressed_ = false;
+        menuCloseButton_.handleXEvent(ev);
         if (captureControl_) captureControl_->handleXEvent(ev);
         captureControl_ = nullptr;
         return true;
@@ -5462,7 +5572,13 @@ bool Neu_Window::handleNeutrinoMenuEvent(XEvent& ev)
     const auto r = neutrinoMenuCloseBounds();
     const double dx = ev.x - (r.x + r.width / 2.0);
     const double dy = ev.y - (r.y + r.height / 2.0);
-    const bool inClose = dx * dx + dy * dy <= r.width * r.width / 4.0;
+    const bool inClose = menuUseNormalCloseButton_
+        ? (ev.x >= r.x && ev.x < r.x + r.width && ev.y >= r.y && ev.y < r.y + r.height)
+        : dx * dx + dy * dy <= r.width * r.width / 4.0;
+    if (menuUseNormalCloseButton_) {
+        if (ev.message == WM_MOUSEMOVE || ev.message == WM_LBUTTONDOWN || ev.message == WM_LBUTTONUP || ev.message == WM_MOUSELEAVE)
+            menuCloseButton_.handleXEvent(ev);
+    }
     if (ev.message == WM_KEYDOWN && ev.wParam == VK_ESCAPE) {
         closeNeutrinoMenu();
         return true;
@@ -5484,7 +5600,14 @@ bool Neu_Window::handleNeutrinoMenuEvent(XEvent& ev)
         else if (target) target->handleXEvent(ev);
     } else if (ev.message == WM_KEYDOWN || ev.message == WM_CHAR) {
         if (focusedControl_ && focusedControl_->visible() && focusedControl_->enabled()) focusedControl_->handleXEvent(ev);
+    } else if (ev.message == WM_MOUSELEAVE) {
+        if (hoveredControl_) hoveredControl_->handleXEvent(ev);
+        hoveredControl_ = nullptr;
     } else if (ev.message == WM_MOUSEMOVE || ev.message == WM_MOUSEWHEEL || ev.message == WM_MOUSEHWHEEL) {
+        if (ev.message == WM_MOUSEMOVE) {
+            TRACKMOUSEEVENT track{sizeof(TRACKMOUSEEVENT), TME_LEAVE, window_, 0};
+            TrackMouseEvent(&track);
+        }
         Neu_Control* target = captureControl_ ? captureControl_ : (inBar ? nullptr : hitTest(ev.x, ev.y));
         if (hoveredControl_ && hoveredControl_ != target) {
             XEvent leave = ev;

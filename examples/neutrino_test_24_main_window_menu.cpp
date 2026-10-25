@@ -14,13 +14,17 @@ int main()
     Neu_Window main(app, 1000, 680, "Neutrino - Main Window Menu with Toolbar");
     Neu_Window secondary(app, 520, 320, "Neutrino - Secondary Window (no wide bar)");
     if (!main.create() || !secondary.create()) return 1;
+    main.setNeutrinoMenuUseNormalCloseButton(true); // false selects the small red circle.
     auto toolbar = std::make_shared<Neu_ToolBar>(Neu_Layout{16, 104, 800, 44});
     main.add(toolbar);
     auto menu = std::make_shared<Neu_PopWindowMenu>();
     menu->setCategories({"Workspace", "Appearance"});
-    menu->setItems("Workspace", {"Main-window-only overlay", "Secondary windows retain their normal content"});
+    menu->setSubmenuRowsPerColumn(4);
+    menu->setItems("Workspace", {"Documents", "Projects", "Recent files", "Pinned files",
+                                 "Search", "Replace", "Bookmarks", "Outline",
+                                 "Preview", "Properties", "History", "Settings"});
     menu->setItems("Appearance", {"Use the button below to apply the light theme"});
-    auto action = std::make_shared<Neu_MenuItem>(Neu_Layout{220, 240, 300, 44});
+    auto action = std::make_shared<Neu_MenuItem>(Neu_Layout{220, 300, 300, 44});
     action->setText("Apply light theme and close menu");
     Neu_Callbacks cb;
     cb.onClick = changeTheme;
@@ -33,7 +37,7 @@ int main()
     note->setText("Only the main application window has the wide bar.");
     secondary.add(note);
     auto editor = std::make_shared<Neu_Multilinetextbox>(Neu_Layout{16, 170, 800, 380});
-    editor->setText("Workspace content is preserved while Neutrino Menu is open.\nTry the Appearance menu button, resizing, and Escape.");
+    editor->setText("Workspace content is preserved while Neutrino Menu is open.\nHover over categories to switch submenus.\nThis example uses the themed Close Menu button.\nTry resizing, the light theme command, and Escape.");
     main.add(editor);
     main.show();
     secondary.show();
