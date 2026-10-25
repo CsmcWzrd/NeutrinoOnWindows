@@ -98,8 +98,8 @@ ctest --test-dir build -C Debug --output-on-failure
 Alternatively use `nmake /f Makefile.msvc test` or
 `mingw32-make -f Makefile.mingw test`. The tests create native windows and use the
 actual window message and rendering paths. Optional `NEUTRINO_TEST_CAPTURE_DIR`
-points to an existing directory for six BMP render artifacts, including both
-close styles and the light theme.
+points to an existing directory for fifteen BMP render artifacts, including both
+close styles, themed progress controls, the six new themes, and the label gallery.
 
 `SOURCE_PROVENANCE.json` and the original `VERIFICATION.md` describe the imported
 split baseline. They are historical records; source checksums change with this

@@ -1,0 +1,24 @@
+MSBuild version 18.11.0-1.26475.11+3cde5c8ec for .NET Framework
+
+  Neu_Win32.cpp
+  Neu_Cards.cpp
+  Neutrino.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\Win32\Release\Neutrino.lib
+  wide_bar_tests.cpp
+  Generating code
+  1634 of 2693 functions (60.7%) were compiled, the rest were copied from previous compilation.
+    603 functions were new in current compilation
+    193 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  NeutrinoWideBarTests.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\Win32\Release\NeutrinoWideBarTests.exe
+  neutrino_theme_showcase.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 2227 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  NeutrinoThemeShowcase.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\Win32\Release\NeutrinoThemeShowcase.exe
+  neutrino_test_14_label_offsets_themes.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 1492 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  NeutrinoTest14LabelOffsetsThemes.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\Win32\Release\NeutrinoTest14LabelOffsetsThemes.exe

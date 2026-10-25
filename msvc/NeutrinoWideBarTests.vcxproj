@@ -207,6 +207,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\examples/common/Neu_TestCommon.hpp" />
+    <ClInclude Include="..\tests/progress_square_tests.hpp" />
+    <ClInclude Include="..\tests/theme_tests.hpp" />
+    <ClInclude Include="..\examples/common/Neu_ThemeShowcase.hpp" />
+    <ClInclude Include="..\examples/common/Neu_LabelThemeGallery.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\tests/wide_bar_tests.cpp" />

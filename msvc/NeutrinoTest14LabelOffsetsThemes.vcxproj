@@ -207,6 +207,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\examples/common/Neu_TestCommon.hpp" />
+    <ClInclude Include="..\examples/common/Neu_LabelThemeGallery.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\examples\neutrino_test_14_label_offsets_themes.cpp" />

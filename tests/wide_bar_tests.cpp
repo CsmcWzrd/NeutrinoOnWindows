@@ -90,6 +90,9 @@ static void render(Neu_Window& w, bool open)
     DeleteDC(dc);
     ReleaseDC(w.xid(), screen);
 }
+#include "progress_square_tests.hpp"
+#include "theme_tests.hpp"
+
 static void testHoverColumns(Neu_Window& w, const std::shared_ptr<Neu_PopWindowMenu>& menu)
 {
     menu->setCategories({"File", "Edit"});
@@ -200,6 +203,8 @@ int main()
         auto menu = std::make_shared<Neu_PopWindowMenu>();
         check(!w.setNeutrinoMenu(menu), "attach requires created main window");
         check(w.create() && other.create(), "native windows created");
+        testProgressSquare(app);
+        testThemes(app,w,other);
         check(app.mainWindow() == &w, "first registered window is main");
         check(!other.setNeutrinoMenu(menu), "secondary window rejected");
         check(!other.wideBarVisible(), "secondary has no bar");

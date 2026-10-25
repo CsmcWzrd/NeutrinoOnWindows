@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 
     auto progress = std::make_shared<Neu_ProgressSquare>(Neu_Layout{700, 95, 150, 150, 1.0f, 180, 180});
     progress->setProgress(0.65f);
-    progress->setHintText("ProgressSquare edge highlights increase as progress nears completion.");
+    progress->setHintText("Themed button shape with a 10px progress line and a 6px inside gap, including the slanted edges.");
     win.add(progress);
 
     ProgressState state{progress.get(), status.get(), 0.65f};
@@ -90,6 +90,11 @@ int main(int argc, char** argv)
     step->setIconBmp("assets/icons/save_icon.bmp");
     step->setCallbacks(step_cb);
     win.add(step);
+
+    auto reference = std::make_shared<Neu_Button>(Neu_Layout{700, 350, 150, 150});
+    reference->setText("Themed button");
+    reference->setHintText("Compare this button's face and six-edge outline with the progress control above.");
+    win.add(reference);
 
     win.show();
     app.run();

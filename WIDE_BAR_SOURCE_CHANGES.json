@@ -4,12 +4,42 @@
     {
       "path": "CMakeLists.txt",
       "change": "modified",
-      "sha256": "b65f9fe623fdb5212ba853e5908a68817c45e45de1c1ee209ad205105401ec6f"
+      "sha256": "9226d76e17248963b4d4cb1bb4d774f2799fa5ffb567081941b3d544f511f898"
+    },
+    {
+      "path": "docs/PROGRESS_SQUARE.md",
+      "change": "added",
+      "sha256": "790397d245fe884c456df6ba9a38b875189f842141bc5a99458817fb1d6b6921"
+    },
+    {
+      "path": "docs/THEMES_AND_SHORTCUTS.md",
+      "change": "added",
+      "sha256": "b77007dba3420bbc551c4d3f17703719b36db09a12c5a0c20aae688bde4d2b2a"
     },
     {
       "path": "docs/WIDE_BAR.md",
       "change": "added",
-      "sha256": "bd2309775b1bd4d5ac71b983da9b2f755dde50b2fc1f7bca2a27ff6a96e32092"
+      "sha256": "2728cd08bba1f3407dfe0a1b6147df885e92e13b76f5c45b9e926986d020273f"
+    },
+    {
+      "path": "examples/common/Neu_LabelThemeGallery.hpp",
+      "change": "added",
+      "sha256": "119c89e2a13097d76be53acee25812e9fbe54bb163e5e863a37d5480a811e7cb"
+    },
+    {
+      "path": "examples/common/Neu_ThemeShowcase.hpp",
+      "change": "added",
+      "sha256": "7d52f71b39808daee15acc7afb976a6d64a9e8dfa7f1fead287d1b4dd4970496"
+    },
+    {
+      "path": "examples/neutrino_test_10_images_progress_labels.cpp",
+      "change": "modified",
+      "sha256": "6512902c5dba8bc7ac91bb32ec97671367b202e435e7b55a9edf625192cdba1f"
+    },
+    {
+      "path": "examples/neutrino_test_14_label_offsets_themes.cpp",
+      "change": "modified",
+      "sha256": "0d5026289a09e7fb1c4725602afacb83aea36e7795725d148ed603e67e9ee5b9"
     },
     {
       "path": "examples/neutrino_test_23_wide_bar.cpp",
@@ -22,24 +52,34 @@
       "sha256": "a6b0a712cae8133b0d143789db7c27b6d5309fcc0737e4d7e55b6563a4d4c059"
     },
     {
+      "path": "examples/neutrino_theme_showcase.cpp",
+      "change": "added",
+      "sha256": "844d98089083d84220fa1c2365d882fd3c903067d625e8a79d9ec3e9a9cd7278"
+    },
+    {
       "path": "include/Neutrino/Neutrino.hpp",
       "change": "modified",
-      "sha256": "c6f9b4103da92031069469775ee4e8fddb84de751d5543cf2fbefd189c983414"
+      "sha256": "27ea0db88ba1fb0f25edb832e2e3190021d4e46059c4178f596c0c7cd478f7c2"
     },
     {
       "path": "Makefile.mingw",
       "change": "modified",
-      "sha256": "b9b4c619f2a5880e20aa7076815e88913d8a63b9324efe0186fd369af6e8a55d"
+      "sha256": "8f4c5d8ab0727a388cc57386fc39f1be2bd3fdfc1e18eb58539e9fc82b9e034d"
     },
     {
       "path": "Makefile.msvc",
       "change": "modified",
-      "sha256": "cf24e6fbab030954b37b34dc211b96db1f0bff2d0880b36ab9a5f4daee2a0e77"
+      "sha256": "cd90723ccf7bd69494fbf614c79287ebfb50e45baecd543fa1d0e47227313db3"
     },
     {
       "path": "msvc/Neutrino.sln",
       "change": "modified",
-      "sha256": "ee6edc26ad89df4187791ca3a0c29a1645f706f4d2b7fc846ae82179ae5d2215"
+      "sha256": "592f20d847ccc17a6a5995a77add92eb1b4d130788e76f372ef0714fa9535ef7"
+    },
+    {
+      "path": "msvc/NeutrinoTest14LabelOffsetsThemes.vcxproj",
+      "change": "modified",
+      "sha256": "45b15f491d88a875c14f1d921292be5180e530123108b45e55d429c1af7ba1bb"
     },
     {
       "path": "msvc/NeutrinoTest23WideBar.vcxproj",
@@ -52,24 +92,39 @@
       "sha256": "fef7863fcb713fd5f54759f66dcf6286ff91bf20a846bf21a5f7e864135e9b52"
     },
     {
+      "path": "msvc/NeutrinoThemeShowcase.vcxproj",
+      "change": "added",
+      "sha256": "7b9fb2c76bf370b9e2130487cb1cea663f0e248e2ca709965f1be485878469cd"
+    },
+    {
       "path": "msvc/NeutrinoWideBarTests.vcxproj",
       "change": "added",
-      "sha256": "3e49f8b88321ef12b5a70785b408e9664cc4e0bc86538d00e4b0aa7da5662726"
+      "sha256": "fd04a761ae0d2e035bec23450d9e45209c3c4e9a65e6f39dc27b8b094df21020"
     },
     {
       "path": "README.md",
       "change": "modified",
-      "sha256": "059b32c863927e8c2e0a33c8476ecceba3683bd6f089272edfccab9e750e45fe"
+      "sha256": "3625d80bb8481bb574bf6b75f5fbeca9f628981647eeea6b66bdf16b9a1db095"
     },
     {
       "path": "src/win32/Neu_Win32.cpp",
       "change": "modified",
-      "sha256": "66e0dbf81c92931cd253a5490b89eae671338764e474557c38e3fca8d8dc07bb"
+      "sha256": "256fb69f365572a0c493e274b9a11a023a4eec7a84d87d7a31b240d457ba2871"
+    },
+    {
+      "path": "tests/progress_square_tests.hpp",
+      "change": "added",
+      "sha256": "e562cc40e035ab5b2e583e0e93c53c802970f4b7b714c78f41a0252e721a6fe4"
+    },
+    {
+      "path": "tests/theme_tests.hpp",
+      "change": "added",
+      "sha256": "b96650c045a64c3be9760eaeafefe5653cb92834c6fed6a345aed70cd0ec3538"
     },
     {
       "path": "tests/wide_bar_tests.cpp",
       "change": "added",
-      "sha256": "c0b4dc83f8870a788a7be04020e031f181ed8f2b5e5740b88bc112d2dfad482c"
+      "sha256": "5c938bc639fb883d871a77887bf511cb2fc23503059e8309e6172aba7032c2ed"
     },
     {
       "path": "tools/package_wide_bar.py",
@@ -84,7 +139,7 @@
     {
       "path": "validation/build-debug.log",
       "change": "added",
-      "sha256": "5226de53e3f2696ff9ad3a9796302591df67e78b6e4db3bcfa7c978ad1d94e29"
+      "sha256": "2d2199a8bb074b25705328a4235a5ce9e3458a4f36c62d481be9964f52e3e0af"
     },
     {
       "path": "validation/build-nmake.log",
@@ -92,14 +147,29 @@
       "sha256": "ecd67ac4bdab560f1ce808b5e6106434d733f533c4a681ba97829e871e47cf52"
     },
     {
+      "path": "validation/build-progress-debug.log",
+      "change": "added",
+      "sha256": "b02698608a4f748be74c294d600b895f6b050ed66a3e79028fced4cf5dfb34d9"
+    },
+    {
+      "path": "validation/build-progress-win32.log",
+      "change": "added",
+      "sha256": "814359ba231f4ff9cc5b429793517f5fd167113e922c9d9caa211a0a55948989"
+    },
+    {
       "path": "validation/build-release.log",
       "change": "added",
-      "sha256": "750274e2403c2655840cb71095cdc9543255635e947f83ed492ecd05104f26e1"
+      "sha256": "b8eae52f6a5f8fed6123c5606c37758a89fe95743a5b17737169e5f61a94783f"
     },
     {
       "path": "validation/build-solution.log",
       "change": "added",
       "sha256": "453c37c1b34c8e8369074669011d1b4831fc30d9786abfbd17ed447ddf255f67"
+    },
+    {
+      "path": "validation/build-themes-win32.log",
+      "change": "added",
+      "sha256": "3d871d6de367b2a1433915fe1d4918ecdca0113979a7be2a69163da6a86de925"
     },
     {
       "path": "validation/build-win32.log",
@@ -122,9 +192,54 @@
       "sha256": "811faef940bf43b199e10618751f53b1467bee49b631b5fa318d1d29195cbadb"
     },
     {
+      "path": "validation/label-theme-gallery.png",
+      "change": "added",
+      "sha256": "4a4d32598b87b9247f9c0b3a359422abc65b17d99e70f5ac9760a2ccacb819c7"
+    },
+    {
       "path": "validation/menu-overlay.png",
       "change": "added",
       "sha256": "4801364f3c2180004c7d9b580c89a18a253379ddfbbf08747f6b9802b5be34b7"
+    },
+    {
+      "path": "validation/progress-themed-dark.png",
+      "change": "added",
+      "sha256": "be85e8e4250acd061cc446ab93fb3339328dccea855e541e361831eebefdb43e"
+    },
+    {
+      "path": "validation/progress-themed-light.png",
+      "change": "added",
+      "sha256": "0e9062147612f541185f78d5b3ccb48eedbecca71360cadd7b09ba7a4b3b9051"
+    },
+    {
+      "path": "validation/theme-off-white-1.png",
+      "change": "added",
+      "sha256": "54a6b23ff34453381f9d5c984be330d830f9098df40a3ef23170359f41832cc4"
+    },
+    {
+      "path": "validation/theme-off-white-2.png",
+      "change": "added",
+      "sha256": "16fa8be4e9540b13ee1458f7450e0e24f219bcf15c341b5f623fb578fc0992a9"
+    },
+    {
+      "path": "validation/theme-off-white-3.png",
+      "change": "added",
+      "sha256": "9dedf9c4c96274f89aee1a2aae1085b2531b13d393cfe9afb89b120ef7b90b8e"
+    },
+    {
+      "path": "validation/theme-supernova-red-1.png",
+      "change": "added",
+      "sha256": "fc8be2f86b994a950bb5645e4946fd8ec54306f11a159a7c0d06e9ec1585c0ed"
+    },
+    {
+      "path": "validation/theme-supernova-red-2.png",
+      "change": "added",
+      "sha256": "26b681b659889dabab8fd8ce6d53c035ca01c6864b26fb0d2db0ae9eae574ff9"
+    },
+    {
+      "path": "validation/theme-supernova-red-3.png",
+      "change": "added",
+      "sha256": "17ac9e20c1be88e91445c938519cdbc19e8f8cea4c6eaa398a9d1969c928889a"
     },
     {
       "path": "validation/wide-bar.png",
@@ -134,7 +249,7 @@
     {
       "path": "WIDE_BAR_VERIFICATION.md",
       "change": "added",
-      "sha256": "b1d1433df483525fa81ce79a1a4f64e6d8be533bc7049e72e46d766220f66bd1"
+      "sha256": "2e6ffba5c33d56ad3e75b327dd469557b6f8496ebee43bdc9b0983f5aac1c8a6"
     }
   ]
 }

@@ -15,6 +15,12 @@ are historical and may describe the combined package; follow BUILDING.md here.
 See [BUILDING.md](BUILDING.md) for build and installation commands.
 # Main-window Neutrino Menu bar
 
+Six new Supernova/Off White themes, built-in Ctrl+Alt+Left/Right theme cycling,
+and a theme-only showcase are described in [the theme guide](docs/THEMES_AND_SHORTCUTS.md).
+
+The square progress control now matches the themed button, with a doubled
+10-pixel perimeter line and exact 6-pixel inner gap. See [the progress guide](docs/PROGRESS_SQUARE.md).
+
 See [the wide-bar guide](docs/WIDE_BAR.md) for the optional main-window bar,
 menu overlay, red circular X, new examples 23/24, and integration-test commands.
 

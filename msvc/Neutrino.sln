@@ -70,6 +70,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NeutrinoTest24MainWindowMen
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NeutrinoWideBarTests", "NeutrinoWideBarTests.vcxproj", "{B4A85BC0-5E1F-4B8D-88D3-22AF415B6103}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NeutrinoThemeShowcase", "NeutrinoThemeShowcase.vcxproj", "{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -488,6 +490,18 @@ Global
 		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6103}.Release|Win32.Build.0 = Release|Win32
 		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6103}.Release|ARM64.ActiveCfg = Release|ARM64
 		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6103}.Release|ARM64.Build.0 = Release|ARM64
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Debug|x64.ActiveCfg = Debug|x64
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Debug|x64.Build.0 = Debug|x64
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Debug|Win32.Build.0 = Debug|Win32
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Debug|ARM64.Build.0 = Debug|ARM64
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Release|x64.ActiveCfg = Release|x64
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Release|x64.Build.0 = Release|x64
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Release|Win32.ActiveCfg = Release|Win32
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Release|Win32.Build.0 = Release|Win32
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Release|ARM64.ActiveCfg = Release|ARM64
+		{B4A85BC0-5E1F-4B8D-88D3-22AF415B6104}.Release|ARM64.Build.0 = Release|ARM64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1045,6 +1045,15 @@ static LRESULT CALLBACK Neu_WindowProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp
         return 0;
     }
 
+    case WM_SYSKEYDOWN:
+        if (win->themeCyclingShortcutsEnabled() && (wp == VK_LEFT || wp == VK_RIGHT) &&
+            (GetKeyState(VK_CONTROL) & 0x8000) && (GetKeyState(VK_MENU) & 0x8000)) {
+            XEvent ev{}; ev.message = msg; ev.wParam = wp; ev.lParam = lp;
+            win->handleXEvent(ev);
+            return 0;
+        }
+        return DefWindowProcW(hwnd, msg, wp, lp);
+
     case WM_NCDESTROY:
         SetWindowLongPtrW(hwnd, GWLP_USERDATA, 0);
         return DefWindowProcW(hwnd, msg, wp, lp);
@@ -1300,17 +1309,23 @@ static std::string lowerName(std::string value)
 
 Neu_Theme Neu_Theme::Light()
 {
-    return makeTheme({245, 248, 252, 255}, {238, 246, 255, 235}, {150, 175, 205, 255}, {20, 28, 38, 255}, {70, 135, 220, 255}, {225, 238, 255, 255}, {190, 215, 250, 255}, {36, 52, 70, 85}, {255, 255, 232, 245}, {118, 132, 72, 255}, 12);
+    Neu_Theme t = makeTheme({245, 248, 252, 255}, {238, 246, 255, 235}, {150, 175, 205, 255}, {20, 28, 38, 255}, {70, 135, 220, 255}, {225, 238, 255, 255}, {190, 215, 250, 255}, {36, 52, 70, 85}, {255, 255, 232, 245}, {118, 132, 72, 255}, 12);
+    t.name = "Light";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Dark()
 {
-    return makeTheme({24, 28, 34, 255}, {42, 48, 58, 230}, {90, 105, 125, 255}, {235, 240, 248, 255}, {105, 160, 245, 255}, {55, 64, 78, 255}, {70, 85, 105, 255}, {0, 0, 0, 125}, {52, 58, 68, 250}, {145, 165, 200, 255}, 12);
+    Neu_Theme t = makeTheme({24, 28, 34, 255}, {42, 48, 58, 230}, {90, 105, 125, 255}, {235, 240, 248, 255}, {105, 160, 245, 255}, {55, 64, 78, 255}, {70, 85, 105, 255}, {0, 0, 0, 125}, {52, 58, 68, 250}, {145, 165, 200, 255}, 12);
+    t.name = "Dark";
+    return t;
 }
 
 Neu_Theme Neu_Theme::BlueGlass()
 {
-    return makeTheme({222, 237, 255, 255}, {240, 248, 255, 230}, {100, 150, 210, 255}, {10, 35, 70, 255}, {20, 100, 210, 255}, {224, 240, 255, 255}, {184, 215, 250, 255}, {30, 64, 110, 95}, {246, 251, 255, 250}, {95, 135, 190, 255}, 14);
+    Neu_Theme t = makeTheme({222, 237, 255, 255}, {240, 248, 255, 230}, {100, 150, 210, 255}, {10, 35, 70, 255}, {20, 100, 210, 255}, {224, 240, 255, 255}, {184, 215, 250, 255}, {30, 64, 110, 95}, {246, 251, 255, 250}, {95, 135, 190, 255}, 14);
+    t.name = "BlueGlass";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Win95()
@@ -1319,87 +1334,120 @@ Neu_Theme Neu_Theme::Win95()
     t.shadowSize = 3;
     t.shadowOffsetX = 2;
     t.shadowOffsetY = 2;
+    t.name = "Win95";
     return t;
 }
 
 Neu_Theme Neu_Theme::WinXP()
 {
-    return makeTheme({236, 243, 252, 255}, {222, 234, 255, 255}, {59, 97, 156, 255}, {0, 0, 0, 255}, {49, 106, 197, 255}, {255, 238, 194, 255}, {251, 194, 94, 255}, {40, 62, 110, 95}, {255, 255, 225, 255}, {160, 140, 80, 255}, 8, "Tahoma:size=10:antialias=true");
+    Neu_Theme t = makeTheme({236, 243, 252, 255}, {222, 234, 255, 255}, {59, 97, 156, 255}, {0, 0, 0, 255}, {49, 106, 197, 255}, {255, 238, 194, 255}, {251, 194, 94, 255}, {40, 62, 110, 95}, {255, 255, 225, 255}, {160, 140, 80, 255}, 8, "Tahoma:size=10:antialias=true");
+    t.name = "WinXP";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Win10()
 {
-    return makeTheme({243, 243, 243, 255}, {255, 255, 255, 240}, {210, 210, 210, 255}, {32, 32, 32, 255}, {0, 120, 215, 255}, {229, 241, 251, 255}, {204, 228, 247, 255}, {0, 0, 0, 85}, {255, 255, 225, 255}, {120, 120, 80, 255}, 2, "Segoe UI:size=10:antialias=true");
+    Neu_Theme t = makeTheme({243, 243, 243, 255}, {255, 255, 255, 240}, {210, 210, 210, 255}, {32, 32, 32, 255}, {0, 120, 215, 255}, {229, 241, 251, 255}, {204, 228, 247, 255}, {0, 0, 0, 85}, {255, 255, 225, 255}, {120, 120, 80, 255}, 2, "Segoe UI:size=10:antialias=true");
+    t.name = "Win10";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Win11()
 {
-    return makeTheme({249, 249, 249, 255}, {255, 255, 255, 235}, {225, 225, 225, 255}, {32, 32, 32, 255}, {0, 103, 192, 255}, {238, 246, 255, 255}, {213, 234, 255, 255}, {0, 0, 0, 70}, {255, 255, 240, 250}, {120, 120, 90, 255}, 10, "Segoe UI Variable:size=10:antialias=true");
+    Neu_Theme t = makeTheme({249, 249, 249, 255}, {255, 255, 255, 235}, {225, 225, 225, 255}, {32, 32, 32, 255}, {0, 103, 192, 255}, {238, 246, 255, 255}, {213, 234, 255, 255}, {0, 0, 0, 70}, {255, 255, 240, 250}, {120, 120, 90, 255}, 10, "Segoe UI Variable:size=10:antialias=true");
+    t.name = "Win11";
+    return t;
 }
 
 Neu_Theme Neu_Theme::ClassicMotif()
 {
-    return makeTheme({174, 178, 195, 255}, {210, 213, 224, 255}, {93, 98, 114, 255}, {24, 24, 24, 255}, {55, 85, 150, 255}, {226, 228, 236, 255}, {185, 190, 204, 255}, {70, 70, 90, 80}, {255, 255, 220, 255}, {100, 100, 80, 255}, 2);
+    Neu_Theme t = makeTheme({174, 178, 195, 255}, {210, 213, 224, 255}, {93, 98, 114, 255}, {24, 24, 24, 255}, {55, 85, 150, 255}, {226, 228, 236, 255}, {185, 190, 204, 255}, {70, 70, 90, 80}, {255, 255, 220, 255}, {100, 100, 80, 255}, 2);
+    t.name = "ClassicMotif";
+    return t;
 }
 
 Neu_Theme Neu_Theme::SolarizedLight()
 {
-    return makeTheme({253, 246, 227, 255}, {238, 232, 213, 235}, {147, 161, 161, 255}, {101, 123, 131, 255}, {38, 139, 210, 255}, {232, 225, 202, 255}, {220, 210, 185, 255}, {88, 110, 117, 70}, {255, 252, 230, 250}, {181, 137, 0, 255}, 10);
+    Neu_Theme t = makeTheme({253, 246, 227, 255}, {238, 232, 213, 235}, {147, 161, 161, 255}, {101, 123, 131, 255}, {38, 139, 210, 255}, {232, 225, 202, 255}, {220, 210, 185, 255}, {88, 110, 117, 70}, {255, 252, 230, 250}, {181, 137, 0, 255}, 10);
+    t.name = "SolarizedLight";
+    return t;
 }
 
 Neu_Theme Neu_Theme::SolarizedDark()
 {
-    return makeTheme({0, 43, 54, 255}, {7, 54, 66, 235}, {88, 110, 117, 255}, {131, 148, 150, 255}, {38, 139, 210, 255}, {12, 69, 83, 255}, {20, 83, 98, 255}, {0, 0, 0, 130}, {7, 54, 66, 250}, {181, 137, 0, 255}, 10);
+    Neu_Theme t = makeTheme({0, 43, 54, 255}, {7, 54, 66, 235}, {88, 110, 117, 255}, {131, 148, 150, 255}, {38, 139, 210, 255}, {12, 69, 83, 255}, {20, 83, 98, 255}, {0, 0, 0, 130}, {7, 54, 66, 250}, {181, 137, 0, 255}, 10);
+    t.name = "SolarizedDark";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Nord()
 {
-    return makeTheme({46, 52, 64, 255}, {59, 66, 82, 235}, {76, 86, 106, 255}, {236, 239, 244, 255}, {136, 192, 208, 255}, {67, 76, 94, 255}, {94, 129, 172, 255}, {0, 0, 0, 110}, {59, 66, 82, 250}, {129, 161, 193, 255}, 12);
+    Neu_Theme t = makeTheme({46, 52, 64, 255}, {59, 66, 82, 235}, {76, 86, 106, 255}, {236, 239, 244, 255}, {136, 192, 208, 255}, {67, 76, 94, 255}, {94, 129, 172, 255}, {0, 0, 0, 110}, {59, 66, 82, 250}, {129, 161, 193, 255}, 12);
+    t.name = "Nord";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Dracula()
 {
-    return makeTheme({40, 42, 54, 255}, {68, 71, 90, 235}, {98, 114, 164, 255}, {248, 248, 242, 255}, {189, 147, 249, 255}, {80, 82, 105, 255}, {139, 233, 253, 255}, {0, 0, 0, 120}, {68, 71, 90, 250}, {255, 121, 198, 255}, 12);
+    Neu_Theme t = makeTheme({40, 42, 54, 255}, {68, 71, 90, 235}, {98, 114, 164, 255}, {248, 248, 242, 255}, {189, 147, 249, 255}, {80, 82, 105, 255}, {139, 233, 253, 255}, {0, 0, 0, 120}, {68, 71, 90, 250}, {255, 121, 198, 255}, 12);
+    t.name = "Dracula";
+    return t;
 }
 
 Neu_Theme Neu_Theme::GruvboxLight()
 {
-    return makeTheme({251, 241, 199, 255}, {235, 219, 178, 235}, {168, 153, 132, 255}, {60, 56, 54, 255}, {69, 133, 136, 255}, {242, 229, 188, 255}, {213, 196, 161, 255}, {80, 73, 69, 80}, {251, 241, 199, 250}, {181, 118, 20, 255}, 8);
+    Neu_Theme t = makeTheme({251, 241, 199, 255}, {235, 219, 178, 235}, {168, 153, 132, 255}, {60, 56, 54, 255}, {69, 133, 136, 255}, {242, 229, 188, 255}, {213, 196, 161, 255}, {80, 73, 69, 80}, {251, 241, 199, 250}, {181, 118, 20, 255}, 8);
+    t.name = "GruvboxLight";
+    return t;
 }
 
 Neu_Theme Neu_Theme::GruvboxDark()
 {
-    return makeTheme({40, 40, 40, 255}, {60, 56, 54, 235}, {102, 92, 84, 255}, {235, 219, 178, 255}, {250, 189, 47, 255}, {80, 73, 69, 255}, {104, 157, 106, 255}, {0, 0, 0, 130}, {60, 56, 54, 250}, {214, 93, 14, 255}, 8);
+    Neu_Theme t = makeTheme({40, 40, 40, 255}, {60, 56, 54, 235}, {102, 92, 84, 255}, {235, 219, 178, 255}, {250, 189, 47, 255}, {80, 73, 69, 255}, {104, 157, 106, 255}, {0, 0, 0, 130}, {60, 56, 54, 250}, {214, 93, 14, 255}, 8);
+    t.name = "GruvboxDark";
+    return t;
 }
 
 Neu_Theme Neu_Theme::HighContrastLight()
 {
-    return makeTheme({255, 255, 255, 255}, {255, 255, 255, 255}, {0, 0, 0, 255}, {0, 0, 0, 255}, {0, 0, 255, 255}, {220, 235, 255, 255}, {190, 215, 255, 255}, {0, 0, 0, 90}, {255, 255, 210, 255}, {0, 0, 0, 255}, 0);
+    Neu_Theme t = makeTheme({255, 255, 255, 255}, {255, 255, 255, 255}, {0, 0, 0, 255}, {0, 0, 0, 255}, {0, 0, 255, 255}, {220, 235, 255, 255}, {190, 215, 255, 255}, {0, 0, 0, 90}, {255, 255, 210, 255}, {0, 0, 0, 255}, 0);
+    t.name = "HighContrastLight";
+    return t;
 }
 
 Neu_Theme Neu_Theme::HighContrastDark()
 {
-    return makeTheme({0, 0, 0, 255}, {0, 0, 0, 255}, {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 0, 255}, {40, 40, 40, 255}, {70, 70, 70, 255}, {0, 0, 0, 0}, {0, 0, 0, 255}, {255, 255, 0, 255}, 0);
+    Neu_Theme t = makeTheme({0, 0, 0, 255}, {0, 0, 0, 255}, {255, 255, 255, 255}, {255, 255, 255, 255}, {255, 255, 0, 255}, {40, 40, 40, 255}, {70, 70, 70, 255}, {0, 0, 0, 0}, {0, 0, 0, 255}, {255, 255, 0, 255}, 0);
+    t.name = "HighContrastDark";
+    return t;
 }
 
 Neu_Theme Neu_Theme::UbuntuAubergine()
 {
-    return makeTheme({48, 10, 36, 255}, {246, 244, 241, 240}, {174, 167, 159, 255}, {45, 45, 45, 255}, {233, 84, 32, 255}, {255, 240, 230, 255}, {238, 177, 151, 255}, {0, 0, 0, 95}, {255, 247, 230, 250}, {150, 80, 40, 255}, 9, "Ubuntu:size=10:antialias=true");
+    Neu_Theme t = makeTheme({48, 10, 36, 255}, {246, 244, 241, 240}, {174, 167, 159, 255}, {45, 45, 45, 255}, {233, 84, 32, 255}, {255, 240, 230, 255}, {238, 177, 151, 255}, {0, 0, 0, 95}, {255, 247, 230, 250}, {150, 80, 40, 255}, 9, "Ubuntu:size=10:antialias=true");
+    t.name = "UbuntuAubergine";
+    return t;
 }
 
 Neu_Theme Neu_Theme::KDEBreeze()
 {
-    return makeTheme({239, 240, 241, 255}, {252, 252, 252, 240}, {189, 195, 199, 255}, {35, 38, 41, 255}, {61, 174, 233, 255}, {227, 244, 255, 255}, {199, 228, 247, 255}, {0, 0, 0, 70}, {255, 255, 230, 250}, {110, 125, 130, 255}, 5, "Noto Sans:size=10:antialias=true");
+    Neu_Theme t = makeTheme({239, 240, 241, 255}, {252, 252, 252, 240}, {189, 195, 199, 255}, {35, 38, 41, 255}, {61, 174, 233, 255}, {227, 244, 255, 255}, {199, 228, 247, 255}, {0, 0, 0, 70}, {255, 255, 230, 250}, {110, 125, 130, 255}, 5, "Noto Sans:size=10:antialias=true");
+    t.name = "KDEBreeze";
+    return t;
 }
 
 Neu_Theme Neu_Theme::MacAqua()
 {
-    return makeTheme({236, 238, 241, 255}, {255, 255, 255, 238}, {180, 185, 194, 255}, {30, 30, 30, 255}, {0, 122, 255, 255}, {232, 243, 255, 255}, {207, 229, 255, 255}, {0, 0, 0, 75}, {255, 255, 230, 250}, {130, 130, 90, 255}, 11, "San Francisco:size=10:antialias=true");
+    Neu_Theme t = makeTheme({236, 238, 241, 255}, {255, 255, 255, 238}, {180, 185, 194, 255}, {30, 30, 30, 255}, {0, 122, 255, 255}, {232, 243, 255, 255}, {207, 229, 255, 255}, {0, 0, 0, 75}, {255, 255, 230, 250}, {130, 130, 90, 255}, 11, "San Francisco:size=10:antialias=true");
+    t.name = "MacAqua";
+    return t;
 }
 
 Neu_Theme Neu_Theme::MaterialLight()
 {
-    return makeTheme({250, 250, 250, 255}, {255, 255, 255, 240}, {224, 224, 224, 255}, {33, 33, 33, 255}, {33, 150, 243, 255}, {227, 242, 253, 255}, {187, 222, 251, 255}, {0, 0, 0, 80}, {255, 253, 231, 250}, {158, 158, 158, 255}, 6, "Roboto:size=10:antialias=true");
+    Neu_Theme t = makeTheme({250, 250, 250, 255}, {255, 255, 255, 240}, {224, 224, 224, 255}, {33, 33, 33, 255}, {33, 150, 243, 255}, {227, 242, 253, 255}, {187, 222, 251, 255}, {0, 0, 0, 80}, {255, 253, 231, 250}, {158, 158, 158, 255}, 6, "Roboto:size=10:antialias=true");
+    t.name = "MaterialLight";
+    return t;
 }
 
 Neu_Theme Neu_Theme::MaterialDark()
@@ -1412,52 +1460,97 @@ Neu_Theme Neu_Theme::MaterialDark()
     t.antiAliasMode = Neu_AntiAliasMode::SSAA;
     t.antiAliasSamples = 4;
     t.setDefaultEdgeCorners();
+    t.name = "MaterialDark";
     return t;
 }
 
 Neu_Theme Neu_Theme::Ocean()
 {
-    return makeTheme({8, 54, 78, 255}, {221, 245, 252, 230}, {64, 164, 196, 255}, {4, 40, 56, 255}, {0, 157, 196, 255}, {198, 235, 247, 255}, {158, 215, 235, 255}, {0, 30, 50, 95}, {232, 251, 255, 250}, {0, 120, 160, 255}, 13);
+    Neu_Theme t = makeTheme({8, 54, 78, 255}, {221, 245, 252, 230}, {64, 164, 196, 255}, {4, 40, 56, 255}, {0, 157, 196, 255}, {198, 235, 247, 255}, {158, 215, 235, 255}, {0, 30, 50, 95}, {232, 251, 255, 250}, {0, 120, 160, 255}, 13);
+    t.name = "Ocean";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Forest()
 {
-    return makeTheme({30, 64, 42, 255}, {235, 248, 235, 230}, {91, 140, 92, 255}, {28, 50, 30, 255}, {54, 136, 74, 255}, {219, 242, 220, 255}, {184, 224, 188, 255}, {0, 40, 0, 90}, {250, 255, 232, 250}, {91, 120, 60, 255}, 12);
+    Neu_Theme t = makeTheme({30, 64, 42, 255}, {235, 248, 235, 230}, {91, 140, 92, 255}, {28, 50, 30, 255}, {54, 136, 74, 255}, {219, 242, 220, 255}, {184, 224, 188, 255}, {0, 40, 0, 90}, {250, 255, 232, 250}, {91, 120, 60, 255}, 12);
+    t.name = "Forest";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Rose()
 {
-    return makeTheme({255, 242, 246, 255}, {255, 250, 252, 235}, {224, 143, 166, 255}, {82, 29, 45, 255}, {214, 65, 112, 255}, {255, 232, 239, 255}, {246, 199, 214, 255}, {80, 0, 30, 70}, {255, 250, 230, 250}, {190, 90, 120, 255}, 14);
+    Neu_Theme t = makeTheme({255, 242, 246, 255}, {255, 250, 252, 235}, {224, 143, 166, 255}, {82, 29, 45, 255}, {214, 65, 112, 255}, {255, 232, 239, 255}, {246, 199, 214, 255}, {80, 0, 30, 70}, {255, 250, 230, 250}, {190, 90, 120, 255}, 14);
+    t.name = "Rose";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Amber()
 {
-    return makeTheme({255, 248, 225, 255}, {255, 253, 240, 235}, {212, 163, 60, 255}, {65, 48, 20, 255}, {255, 152, 0, 255}, {255, 239, 190, 255}, {255, 213, 128, 255}, {80, 55, 0, 70}, {255, 255, 232, 250}, {180, 120, 40, 255}, 10);
+    Neu_Theme t = makeTheme({255, 248, 225, 255}, {255, 253, 240, 235}, {212, 163, 60, 255}, {65, 48, 20, 255}, {255, 152, 0, 255}, {255, 239, 190, 255}, {255, 213, 128, 255}, {80, 55, 0, 70}, {255, 255, 232, 250}, {180, 120, 40, 255}, 10);
+    t.name = "Amber";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Slate()
 {
-    return makeTheme({226, 232, 240, 255}, {248, 250, 252, 235}, {148, 163, 184, 255}, {30, 41, 59, 255}, {59, 130, 246, 255}, {241, 245, 249, 255}, {203, 213, 225, 255}, {15, 23, 42, 70}, {255, 255, 230, 250}, {100, 116, 139, 255}, 10);
+    Neu_Theme t = makeTheme({226, 232, 240, 255}, {248, 250, 252, 235}, {148, 163, 184, 255}, {30, 41, 59, 255}, {59, 130, 246, 255}, {241, 245, 249, 255}, {203, 213, 225, 255}, {15, 23, 42, 70}, {255, 255, 230, 250}, {100, 116, 139, 255}, 10);
+    t.name = "Slate";
+    return t;
 }
 
 Neu_Theme Neu_Theme::Candy()
 {
-    return makeTheme({255, 245, 252, 255}, {255, 255, 255, 238}, {190, 160, 230, 255}, {76, 42, 100, 255}, {236, 72, 153, 255}, {245, 230, 255, 255}, {244, 194, 230, 255}, {90, 40, 120, 70}, {255, 250, 240, 250}, {190, 120, 200, 255}, 16);
+    Neu_Theme t = makeTheme({255, 245, 252, 255}, {255, 255, 255, 238}, {190, 160, 230, 255}, {76, 42, 100, 255}, {236, 72, 153, 255}, {245, 230, 255, 255}, {244, 194, 230, 255}, {90, 40, 120, 70}, {255, 250, 240, 250}, {190, 120, 200, 255}, 16);
+    t.name = "Candy";
+    return t;
 }
 
 Neu_Theme Neu_Theme::TerminalGreen()
 {
-    return makeTheme({0, 20, 0, 255}, {0, 35, 0, 240}, {0, 128, 0, 255}, {160, 255, 160, 255}, {0, 255, 65, 255}, {0, 55, 0, 255}, {0, 85, 0, 255}, {0, 0, 0, 130}, {0, 40, 0, 250}, {0, 255, 65, 255}, 4, "DejaVu Sans Mono:size=10:antialias=true");
+    Neu_Theme t = makeTheme({0, 20, 0, 255}, {0, 35, 0, 240}, {0, 128, 0, 255}, {160, 255, 160, 255}, {0, 255, 65, 255}, {0, 55, 0, 255}, {0, 85, 0, 255}, {0, 0, 0, 130}, {0, 40, 0, 250}, {0, 255, 65, 255}, 4, "DejaVu Sans Mono:size=10:antialias=true");
+    t.name = "TerminalGreen";
+    return t;
 }
 
 Neu_Theme Neu_Theme::CorporateBlue()
 {
-    return makeTheme({237, 242, 248, 255}, {255, 255, 255, 238}, {166, 184, 204, 255}, {25, 42, 63, 255}, {31, 85, 158, 255}, {225, 237, 252, 255}, {198, 219, 245, 255}, {20, 40, 80, 65}, {255, 255, 232, 250}, {114, 132, 155, 255}, 8);
+    Neu_Theme t = makeTheme({237, 242, 248, 255}, {255, 255, 255, 238}, {166, 184, 204, 255}, {25, 42, 63, 255}, {31, 85, 158, 255}, {225, 237, 252, 255}, {198, 219, 245, 255}, {20, 40, 80, 65}, {255, 255, 232, 250}, {114, 132, 155, 255}, 8);
+    t.name = "CorporateBlue";
+    return t;
 }
+
+namespace {
+static Neu_Theme supernovaTheme(const char* name, Neu_Color highlight)
+{
+    Neu_Theme t = Neu_Theme::MaterialDark();
+    t.name = name;
+    t.accent = t.highlight = t.hover = t.focus = t.hintBorder = highlight;
+    t.pressed = Neu_DarkenColor(highlight, 20);
+    return t;
+}
+static Neu_Theme offWhiteTheme(const char* name, Neu_Color highlight)
+{
+    Neu_Theme t = supernovaTheme(name, highlight);
+    t.background = t.glass = t.hintBackground = Neu_Color{242,240,239,255};
+    t.text = {33,33,33,255};
+    t.controlGradientTop = Neu_LightenColor(t.glass,8);
+    t.controlGradientBottom = Neu_DarkenColor(t.glass,8);
+    t.shadow = {0,0,0,70};
+    return t;
+}
+}
+
+Neu_Theme Neu_Theme::SupernovaRed1() { return supernovaTheme("supernova red 1", {195,0,51,255}); }
+Neu_Theme Neu_Theme::SupernovaRed2() { return supernovaTheme("supernova red 2", {204,0,51,255}); }
+Neu_Theme Neu_Theme::SupernovaRed3() { return supernovaTheme("supernova red 3", {255,30,81,255}); }
+Neu_Theme Neu_Theme::OffWhite1() { return offWhiteTheme("off-white-1", {195,0,51,255}); }
+Neu_Theme Neu_Theme::OffWhite2() { return offWhiteTheme("off-white-2", {204,0,51,255}); }
+Neu_Theme Neu_Theme::OffWhite3() { return offWhiteTheme("off-white-3", {255,30,81,255}); }
 
 std::vector<std::string> Neu_Theme::BuiltInThemeNames()
 {
-    return {"MaterialDark", "Light", "Dark", "BlueGlass", "Win95", "WinXP", "Win10", "Win11", "ClassicMotif", "SolarizedLight", "SolarizedDark", "Nord", "Dracula", "GruvboxLight", "GruvboxDark", "HighContrastLight", "HighContrastDark", "UbuntuAubergine", "KDEBreeze", "MacAqua", "MaterialLight", "Ocean", "Forest", "Rose", "Amber", "Slate", "Candy", "TerminalGreen", "CorporateBlue"};
+    return {"MaterialDark", "Light", "Dark", "BlueGlass", "Win95", "WinXP", "Win10", "Win11", "ClassicMotif", "SolarizedLight", "SolarizedDark", "Nord", "Dracula", "GruvboxLight", "GruvboxDark", "HighContrastLight", "HighContrastDark", "UbuntuAubergine", "KDEBreeze", "MacAqua", "MaterialLight", "Ocean", "Forest", "Rose", "Amber", "Slate", "Candy", "TerminalGreen", "CorporateBlue", "supernova red 1", "supernova red 2", "supernova red 3", "off-white-1", "off-white-2", "off-white-3"};
 }
 
 Neu_Theme Neu_Theme::BuiltInThemeByName(const std::string& name)
@@ -1492,6 +1585,12 @@ Neu_Theme Neu_Theme::BuiltInThemeByName(const std::string& name)
     if (key == "candy") return Candy();
     if (key == "terminalgreen") return TerminalGreen();
     if (key == "corporateblue") return CorporateBlue();
+    if (key == "supernovared1") return SupernovaRed1();
+    if (key == "supernovared2") return SupernovaRed2();
+    if (key == "supernovared3") return SupernovaRed3();
+    if (key == "offwhite1") return OffWhite1();
+    if (key == "offwhite2") return OffWhite2();
+    if (key == "offwhite3") return OffWhite3();
     return Light();
 }
 
@@ -1817,6 +1916,9 @@ void Neu_Control::drawIconBmp(Display*, Drawable drawable, GC, int x, int y, int
 
 void Neu_Control::drawShadow(Display* d, Drawable drawable, GC gc, const Neu_Theme& theme)
 {
+    // Labels have transparent faces; a filled shadow behind them makes dark
+    // text unreadable on light themes.
+    if (dynamic_cast<Neu_Label*>(this)) return;
     if (!g_options.drawShadows) {
         return;
     }
@@ -4599,42 +4701,183 @@ void Neu_RichTextCode::handleXEvent(XEvent& ev)
     Neu_Multilinetextbox::handleXEvent(ev);
 }
 
+namespace {
+struct ProgressPoint { double x, y; };
+using ProgressContour = std::vector<ProgressPoint>;
+constexpr double progressGap = 6.0;
+constexpr int progressThickness = 10; // Previously 5 pixels.
+constexpr double progressOuterInset = 1.0 + progressGap; // One-pixel themed border.
+
+static double progressArea(const ProgressContour& points)
+{
+    double area = 0;
+    for (size_t i = 0; i < points.size(); ++i) {
+        const auto a = points[i], b = points[(i+1)%points.size()];
+        area += a.x*b.y - b.x*a.y;
+    }
+    return area;
+}
+
+// Use the very same path as the themed button, including its corner choices.
+static ProgressContour progressContour(HDC dc, const Neu_Rect& r, int radius)
+{
+    beginThemedRectPathWin32(dc, r, radius);
+    if (!FlattenPath(dc)) { AbortPath(dc); return {}; }
+    const int count = GetPath(dc, nullptr, nullptr, 0);
+    if (count <= 0) { AbortPath(dc); return {}; }
+    std::vector<POINT> points(static_cast<size_t>(count));
+    std::vector<BYTE> types(static_cast<size_t>(count));
+    GetPath(dc, points.data(), types.data(), count);
+    AbortPath(dc);
+    ProgressContour contour;
+    for (const auto& p : points)
+        if (contour.empty() || contour.back().x != p.x || contour.back().y != p.y)
+            contour.push_back({static_cast<double>(p.x), static_cast<double>(p.y)});
+    if (contour.size() > 1 && contour.front().x == contour.back().x && contour.front().y == contour.back().y)
+        contour.pop_back();
+    if (progressArea(contour) < 0) std::reverse(contour.begin(), contour.end());
+    return contour;
+}
+
+// Intersect inward-offset half planes. This also handles bevels that disappear
+// at a large inset, rather than letting their offset edges cross each other.
+static ProgressContour insetProgressContour(const ProgressContour& original, double inset)
+{
+    auto result = original;
+    for (size_t i = 0; i < original.size() && !result.empty(); ++i) {
+        const auto a = original[i], b = original[(i+1)%original.size()];
+        const double length = std::hypot(b.x-a.x, b.y-a.y);
+        if (length < 1e-8) continue;
+        const double nx = -(b.y-a.y)/length, ny = (b.x-a.x)/length;
+        auto distance = [&](const ProgressPoint& p) { return nx*(p.x-a.x)+ny*(p.y-a.y)-inset; };
+        ProgressContour clipped;
+        auto previous = result.back(); double pd = distance(previous);
+        for (const auto current : result) {
+            const double cd = distance(current);
+            if ((cd >= -1e-8) != (pd >= -1e-8)) {
+                const double t = pd/(pd-cd);
+                clipped.push_back({previous.x+(current.x-previous.x)*t, previous.y+(current.y-previous.y)*t});
+            }
+            if (cd >= -1e-8) clipped.push_back(current);
+            previous = current; pd = cd;
+        }
+        result = std::move(clipped);
+    }
+    return result;
+}
+
+// Sample parallel offsets at pixel centers. Inclusive span ends keep exactly
+// six clear pixels and ten progress pixels on both opposing straight edges.
+static HRGN progressInsetRegion(const ProgressContour& contour, const Neu_Rect& r, double inset)
+{
+    std::vector<RECT> spans;
+    for (int y = r.y; y <= r.y+r.height; ++y) {
+        double left = r.x, right = r.x+r.width;
+        bool valid = true;
+        for (size_t i=0; i<contour.size(); ++i) {
+            const auto a = contour[i], b = contour[(i+1)%contour.size()];
+            const double length = std::hypot(b.x-a.x, b.y-a.y);
+            if (length < 1e-8) continue;
+            const double nx = -(b.y-a.y)/length, ny = (b.x-a.x)/length;
+            const double threshold = nx*a.x + ny*a.y + inset - ny*y;
+            if (nx > 1e-8) left = std::max(left, threshold/nx);
+            else if (nx < -1e-8) right = std::min(right, threshold/nx);
+            else if (threshold > 1e-8) { valid = false; break; }
+        }
+        const int x1 = static_cast<int>(std::ceil(left-1e-7));
+        const int x2 = static_cast<int>(std::floor(right+1e-7));
+        if (valid && x1 <= x2) spans.push_back(RECT{x1,y,x2+1,y+1});
+    }
+    if (spans.empty()) return CreateRectRgn(0,0,0,0);
+    std::vector<unsigned char> bytes(sizeof(RGNDATAHEADER)+spans.size()*sizeof(RECT));
+    auto* data = reinterpret_cast<RGNDATA*>(bytes.data());
+    data->rdh = RGNDATAHEADER{sizeof(RGNDATAHEADER),RDH_RECTANGLES,static_cast<DWORD>(spans.size()),
+                             static_cast<DWORD>(spans.size()*sizeof(RECT)),
+                             RECT{r.x,r.y,r.x+r.width+1,r.y+r.height+1}};
+    std::memcpy(data->Buffer, spans.data(), spans.size()*sizeof(RECT));
+    return ExtCreateRegion(nullptr, static_cast<DWORD>(bytes.size()), data);
+}
+
+// Start at the middle of the top edge and travel clockwise.
+static ProgressContour progressClockwisePath(ProgressContour contour)
+{
+    if (contour.size() < 3) return {};
+    double top = contour.front().y;
+    for (const auto p : contour) top = std::min(top, p.y);
+    for (size_t i=0; i<contour.size(); ++i) {
+        const auto a=contour[i], b=contour[(i+1)%contour.size()];
+        if (std::abs(a.y-top)<1e-6 && std::abs(b.y-top)<1e-6 && b.x>a.x) {
+            ProgressContour path{{(a.x+b.x)/2,top}};
+            for (size_t j=1; j<=contour.size(); ++j) path.push_back(contour[(i+j)%contour.size()]);
+            path.push_back(path.front());
+            return path;
+        }
+    }
+    return {}; // An undersized control cannot accommodate the full-width ring.
+}
+} // namespace
+
 void Neu_ProgressSquare::setProgress(float progress)
 {
-    progress_ = std::max(0.0f, std::min(1.0f, progress));
+    progress_ = std::isnan(progress) ? 0.0f : std::max(0.0f, std::min(1.0f, progress));
     requestRedraw();
 }
 
 void Neu_ProgressSquare::draw(Display* d, Drawable drawable, GC gc, const Neu_Theme& theme)
 {
+    Neu_SetCurrentDrawingTheme(theme);
     Neu_Control::draw(d, drawable, gc, theme);
-    Neu_Rect r = bounds();
-    const int side = std::max(8, std::min(r.width, r.height) - 18);
-    const int x = r.x + (r.width - side) / 2;
-    const int y = r.y + (r.height - side) / 2;
-    const int cx = x + side / 2;
-    const int perimeter = side / 2 + side + side + side + side / 2;
-    int remaining = static_cast<int>(perimeter * progress_);
-    HPEN pen = CreatePen(PS_SOLID, 5, rgb(progress_ > 0.85f ? Neu_Color{255, 215, 60, 255} : theme.accent));
-    HGDIOBJ old = SelectObject(drawable, pen);
-    auto drawPart = [&](int x1, int y1, int x2, int y2) {
-        if (remaining <= 0) return;
-        int len = std::max(std::abs(x2 - x1), std::abs(y2 - y1));
-        int used = std::min(remaining, len);
-        int ex = x1 + (len ? (x2 - x1) * used / len : 0);
-        int ey = y1 + (len ? (y2 - y1) * used / len : 0);
-        MoveToEx(drawable, x1, y1, nullptr);
-        LineTo(drawable, ex, ey);
-        remaining -= used;
-    };
-    drawPart(cx, y, x + side, y);
-    drawPart(x + side, y, x + side, y + side);
-    drawPart(x + side, y + side, x, y + side);
-    drawPart(x, y + side, x, y);
-    drawPart(x, y, cx, y);
-    SelectObject(drawable, old);
-    DeleteObject(pen);
-    drawText(d, drawable, gc, theme, std::to_string(static_cast<int>(progress_ * 100.0f)) + "%", x + side / 2 - 16, y + side / 2 - 8);
+    const auto r = bounds();
+    if (!drawable || r.width <= 0 || r.height <= 0) return;
+    const auto contour = progressContour(drawable, r, theme.radius);
+    if (contour.size() < 3) return;
+    const auto center = progressClockwisePath(insetProgressContour(contour, progressOuterInset + progressThickness/2.0));
+    const auto inside = insetProgressContour(contour, progressOuterInset + progressThickness);
+    // Never shrink the gap or stroke to squeeze them into a tiny control.
+    if (center.empty() || inside.size() < 3 || progressArea(inside) < 1) return;
+    HRGN outer = progressInsetRegion(contour, r, progressOuterInset);
+    HRGN inner = progressInsetRegion(contour, r, progressOuterInset + progressThickness);
+    if (!outer || !inner) { if (outer) DeleteObject(outer); if (inner) DeleteObject(inner); return; }
+    HRGN ring = CreateRectRgn(0,0,0,0);
+    CombineRgn(ring, outer, inner, RGN_DIFF);
+    const int saved = SaveDC(drawable);
+    ExtSelectClipRgn(drawable, ring, RGN_AND);
+    if (progress_ >= 1.0f) {
+        HBRUSH brush = CreateSolidBrush(rgb(theme.accent));
+        FillRgn(drawable, ring, brush);
+        DeleteObject(brush);
+    } else if (progress_ > 0) {
+        double perimeter = 0;
+        for (size_t i=1; i<center.size(); ++i) perimeter += std::hypot(center[i].x-center[i-1].x, center[i].y-center[i-1].y);
+        double remaining = perimeter*progress_;
+        LOGBRUSH brush{BS_SOLID,rgb(theme.accent),0};
+        // The region fixes the final ten-pixel width. One-pixel oversampling
+        // on each side avoids holes from rounding the center path to GDI points.
+        HPEN pen = ExtCreatePen(PS_GEOMETRIC|PS_SOLID|PS_JOIN_MITER|PS_ENDCAP_FLAT,progressThickness+2,&brush,0,nullptr);
+        auto oldPen = SelectObject(drawable,pen);
+        BeginPath(drawable);
+        MoveToEx(drawable,static_cast<int>(std::lround(center[0].x)),static_cast<int>(std::lround(center[0].y)),nullptr);
+        for (size_t i=1; i<center.size() && remaining>0; ++i) {
+            const auto a=center[i-1], b=center[i];
+            const double length=std::hypot(b.x-a.x,b.y-a.y);
+            if (length<1e-8) continue;
+            const double fraction=std::min(1.0,remaining/length);
+            LineTo(drawable,static_cast<int>(std::lround(a.x+(b.x-a.x)*fraction)),static_cast<int>(std::lround(a.y+(b.y-a.y)*fraction)));
+            remaining-=std::min(remaining,length);
+        }
+        EndPath(drawable); StrokePath(drawable);
+        SelectObject(drawable,oldPen); DeleteObject(pen);
+    }
+    RestoreDC(drawable,saved);
+    const int textSaved=SaveDC(drawable);
+    ExtSelectClipRgn(drawable,inner,RGN_AND);
+    RECT text{r.x+17,r.y+17,r.x+r.width-17,r.y+r.height-17};
+    auto oldFont=SelectObject(drawable,uiFont());
+    SetBkMode(drawable,TRANSPARENT); SetTextColor(drawable,rgb(theme.text));
+    const auto label=toWide(std::to_string(static_cast<int>(progress_*100.0f))+"%");
+    DrawTextW(drawable,label.c_str(),-1,&text,DT_CENTER|DT_VCENTER|DT_SINGLELINE|DT_END_ELLIPSIS);
+    SelectObject(drawable,oldFont); RestoreDC(drawable,textSaved);
+    DeleteObject(ring); DeleteObject(inner); DeleteObject(outer);
 }
 
 void Neu_ImageView::draw(Display* d, Drawable drawable, GC gc, const Neu_Theme& theme)
@@ -5727,11 +5970,25 @@ void Neu_Window::ensureBuffers()
     bufferHeight_ = height_;
 }
 
+void Neu_Window::cycleTheme(int direction)
+{
+    if (!direction) return;
+    const auto names = Neu_Theme::BuiltInThemeNames();
+    if (names.empty()) return;
+    const auto current = std::find_if(names.begin(), names.end(), [&](const std::string& name) {
+        return lowerName(name) == lowerName(theme_.name);
+    });
+    int index = current == names.end() ? (direction > 0 ? -1 : 0) : static_cast<int>(current - names.begin());
+    index = (index + (direction > 0 ? 1 : -1) + static_cast<int>(names.size())) % static_cast<int>(names.size());
+    setTheme(Neu_Theme::BuiltInThemeByName(names[static_cast<size_t>(index)]));
+}
+
 void Neu_Window::setTheme(const Neu_Theme& theme)
 {
     theme_ = theme;
     Neu_ApplyThemeRenderingOptions(theme_);
     requestRedraw();
+    if (onThemeChanged_) onThemeChanged_(this, themeUserData_);
 }
 
 void Neu_Window::drawScene(Drawable target)
@@ -5882,6 +6139,14 @@ void Neu_Window::setFocusedControl(Neu_Control* control)
 
 void Neu_Window::handleXEvent(XEvent& ev)
 {
+    if (themeCyclingShortcutsEnabled_ && (ev.message == WM_KEYDOWN || ev.message == WM_SYSKEYDOWN) &&
+        (ev.wParam == VK_LEFT || ev.wParam == VK_RIGHT) &&
+        (GetKeyState(VK_CONTROL) & 0x8000) && (GetKeyState(VK_MENU) & 0x8000)) {
+        // Holding a key does not race through the catalog; one cycle per press.
+        if (!(ev.lParam & (static_cast<LPARAM>(1) << 30))) cycleTheme(ev.wParam == VK_RIGHT ? 1 : -1);
+        return;
+    }
+
     if (ev.message == WM_CLOSE) {
         if (onClose_) {
             onClose_(this, closeUserData_);

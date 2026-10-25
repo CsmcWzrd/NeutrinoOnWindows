@@ -171,6 +171,8 @@ struct Neu_Theme {
     int shadowOffsetY{4};
     std::string fontName{"DejaVu Sans:size=10:antialias=true:hinting=true:hintstyle=hintfull:rgba=rgb:lcdfilter=lcddefault"};
     Neu_FontFamily fontFamily{Neu_FontFamily::Sans};
+    // Built-in identity is retained even when two themes share a palette.
+    std::string name{"MaterialDark"};
     void setFontFamily(Neu_FontFamily family) { fontFamily = family; fontName = Neu_FontFamilyName(family); }
     void setFontFamily(Neu_FontFamily family, const std::string& concreteFontName) { fontFamily = family; fontName = concreteFontName.empty() ? Neu_FontFamilyName(family) : concreteFontName; }
     void setAllCorners(Neu_CornerStyle style) { topLeftCorner = style; topRightCorner = style; bottomLeftCorner = style; bottomRightCorner = style; }
@@ -206,6 +208,12 @@ struct Neu_Theme {
     static Neu_Theme Candy();
     static Neu_Theme TerminalGreen();
     static Neu_Theme CorporateBlue();
+    static Neu_Theme SupernovaRed1();
+    static Neu_Theme SupernovaRed2();
+    static Neu_Theme SupernovaRed3();
+    static Neu_Theme OffWhite1();
+    static Neu_Theme OffWhite2();
+    static Neu_Theme OffWhite3();
     static std::vector<std::string> BuiltInThemeNames();
     static Neu_Theme BuiltInThemeByName(const std::string& name);
 };
@@ -702,6 +710,8 @@ public:
     const char* className() const override { return "Neu_ProgressSquare"; }
     void setProgress(float progress);
     float progress() const { return progress_; }
+    // Uses the button's themed outline. The 10px perimeter line is separated
+    // from the border's inside edge by 6px, including chamfered edges.
     void draw(Display* d, Drawable drawable, GC gc, const Neu_Theme& theme) override;
 private:
     float progress_{0.0f};
@@ -1025,6 +1035,12 @@ public:
     // false (default): 16-pixel red circle; true: themed "Close Menu" button.
     void setNeutrinoMenuUseNormalCloseButton(bool enabled);
     bool neutrinoMenuUsesNormalCloseButton() const { return menuUseNormalCloseButton_; }
+    // Built in for every window: Ctrl+Alt+Right/Left cycles forward/backward.
+    void cycleTheme(int direction = 1);
+    const std::string& themeName() const { return theme_.name; }
+    void setThemeCyclingShortcutsEnabled(bool enabled) { themeCyclingShortcutsEnabled_ = enabled; }
+    bool themeCyclingShortcutsEnabled() const { return themeCyclingShortcutsEnabled_; }
+    void setOnThemeChanged(Neu_WindowCallback callback, void* userData) { onThemeChanged_ = callback; themeUserData_ = userData; }
 private:
     Neu_Application& app_;
     Display* display_{nullptr};
@@ -1035,6 +1051,9 @@ private:
     int height_{0};
     std::string title_;
     Neu_Theme theme_;
+    bool themeCyclingShortcutsEnabled_{true};
+    Neu_WindowCallback onThemeChanged_{nullptr};
+    void* themeUserData_{nullptr};
     std::vector<std::shared_ptr<Neu_Control>> controls_;
     Neu_WindowCallback onClose_{nullptr};
     void* closeUserData_{nullptr};
