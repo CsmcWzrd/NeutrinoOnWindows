@@ -17,7 +17,7 @@ OUT=$(BUILD_DIR)\$(CONFIG)
 LIBRARY=$(OUT)\Neutrino.lib
 SYSTEM_LIBS=user32.lib gdi32.lib comctl32.lib
 EXAMPLES=$(OUT)\neutrino_demo.exe $(OUT)\neutrino_test_all_controls.exe $(OUT)\neutrino_test_windows.exe $(OUT)\neutrino_test_typed_views.exe $(OUT)\neutrino_test_smooth_graphics.exe $(OUT)\neutrino_test_treeview_collapse.exe $(OUT)\neutrino_test_heavy_data.exe $(OUT)\neutrino_test_01_buttons_icons.exe $(OUT)\neutrino_test_02_text_inputs.exe $(OUT)\neutrino_test_03_lists_combo_autoscroll.exe $(OUT)\neutrino_test_04_listview_typed_data.exe $(OUT)\neutrino_test_05_treeview_collapse.exe $(OUT)\neutrino_test_06_placement_layout_scaling.exe $(OUT)\neutrino_test_07_popup_menu_categories.exe $(OUT)\neutrino_test_08_richtext_code.exe $(OUT)\neutrino_test_09_readonly_richtext_icons.exe $(OUT)\neutrino_test_10_images_progress_labels.exe $(OUT)\neutrino_test_11_rendering_buffering.exe $(OUT)\neutrino_test_12_scroll_windows_heavy_data.exe $(OUT)\neutrino_test_13_swing_swt_controls.exe $(OUT)\neutrino_test_14_label_offsets_themes.exe $(OUT)\neutrino_test_15_selection_controls.exe $(OUT)\neutrino_test_16_value_controls.exe $(OUT)\neutrino_test_17_tabs_toolbar_splitter.exe $(OUT)\neutrino_test_18_stage2_scroll_controls.exe $(OUT)\neutrino_test_19_material_beauty.exe $(OUT)\neutrino_test_20_full_richtext_control.exe $(OUT)\neutrino_test_21_full_richtext_code_control.exe $(OUT)\neutrino_test_22_cards.exe $(OUT)\neutrino_win32_demo.exe
-all: $(LIBRARY) $(EXAMPLES)
+all: $(OUT)\neutrino_test_23_wide_bar.exe $(LIBRARY) $(EXAMPLES)
 library: $(LIBRARY)
 $(OUT):
 	@if not exist "$(OUT)" mkdir "$(OUT)"
@@ -90,3 +90,16 @@ $(OUT)\neutrino_win32_demo.exe: examples\windows\neutrino_win32_demo.cpp example
 
 clean:
 	@if exist "$(OUT)" rmdir /s /q "$(OUT)"
+
+$(OUT)\neutrino_test_23_wide_bar.exe: examples\neutrino_test_23_wide_bar.cpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_23_wide_bar.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_23_wide_bar.obj /Fe$@ /link /SUBSYSTEM:CONSOLE
+
+$(OUT)\neutrino_test_24_main_window_menu.exe: examples\neutrino_test_24_main_window_menu.cpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) examples\neutrino_test_24_main_window_menu.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_test_24_main_window_menu.obj /Fe$@ /link /SUBSYSTEM:CONSOLE
+
+$(OUT)\neutrino_wide_bar_tests.exe: tests\wide_bar_tests.cpp $(LIBRARY)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) tests\wide_bar_tests.cpp $(LIBRARY) $(SYSTEM_LIBS) /Fo$(OUT)\neutrino_wide_bar_tests.obj /Fe$@ /link /SUBSYSTEM:CONSOLE
+
+test: $(OUT)\neutrino_wide_bar_tests.exe
+	$(OUT)\neutrino_wide_bar_tests.exe
+

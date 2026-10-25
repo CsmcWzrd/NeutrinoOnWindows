@@ -1,0 +1,73 @@
+MSBuild version 18.11.0-1.26475.11+3cde5c8ec for .NET Framework
+
+  Neu_Cards.cpp
+  Neu_Win32.cpp
+  Generating Code...
+  Neutrino.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\Neutrino.lib
+  neutrino_win32_demo.cpp
+  wide_bar_tests.cpp
+  test_typed_views.cpp
+  test_windows.cpp
+  test_heavy_data.cpp
+  test_smooth_graphics.cpp
+  neutrino_test_20_full_richtext_control.cpp
+  neutrino_test_22_cards.cpp
+LINK : warning LNK4067: ambiguous entry point; selected 'WinMainCRTStartup' [C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\neutrino_win32_demo.vcxproj]
+  neutrino_win32_demo.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_win32_demo.exe
+  neutrino_test_11_rendering_buffering.cpp
+  neutrino_test_typed_views.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_typed_views.exe
+  neutrino_test_windows.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_windows.exe
+  neutrino_wide_bar_tests.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_wide_bar_tests.exe
+  neutrino_test_smooth_graphics.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_smooth_graphics.exe
+  test_treeview_collapse.cpp
+  test_all_controls.cpp
+  neutrino_test_24_main_window_menu.cpp
+  neutrino_test_23_wide_bar.cpp
+  neutrino_test_21_full_richtext_code_control.cpp
+  neutrino_test_18_stage2_scroll_controls.cpp
+  neutrino_test_treeview_collapse.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_treeview_collapse.exe
+  neutrino_test_19_material_beauty.cpp
+  neutrino_test_23_wide_bar.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_23_wide_bar.exe
+  neutrino_test_12_scroll_windows_heavy_data.cpp
+  neutrino_test_22_cards.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_22_cards.exe
+  neutrino_test_11_rendering_buffering.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_11_rendering_buffering.exe
+  neutrino_test_18_stage2_scroll_controls.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_18_stage2_scroll_controls.exe
+  neutrino_test_02_text_inputs.cpp
+  neutrino_test_14_label_offsets_themes.cpp
+  neutrino_test_21_full_richtext_code_control.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_21_full_richtext_code_control.exe
+  neutrino_test_all_controls.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_all_controls.exe
+  neutrino_test_20_full_richtext_control.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_20_full_richtext_control.exe
+  neutrino_test_24_main_window_menu.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_24_main_window_menu.exe
+  neutrino_test_01_buttons_icons.cpp
+  neutrino_test_17_tabs_toolbar_splitter.cpp
+  neutrino_test_16_value_controls.cpp
+  neutrino_test_15_selection_controls.cpp
+  neutrino_test_13_swing_swt_controls.cpp
+  neutrino_test_12_scroll_windows_heavy_data.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_12_scroll_windows_heavy_data.exe
+  neutrino_test_10_images_progress_labels.cpp
+  neutrino_test_09_readonly_richtext_icons.cpp
+  demo.cpp
+  neutrino_test_17_tabs_toolbar_splitter.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_17_tabs_toolbar_splitter.exe
+  neutrino_test_15_selection_controls.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_15_selection_controls.exe
+  neutrino_test_14_label_offsets_themes.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_14_label_offsets_themes.exe
+  neutrino_test_13_swing_swt_controls.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_13_swing_swt_controls.exe
+  neutrino_test_02_text_inputs.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_02_text_inputs.exe
+  neutrino_test_10_images_progress_labels.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_10_images_progress_labels.exe
+  neutrino_test_09_readonly_richtext_icons.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_09_readonly_richtext_icons.exe
+  neutrino_test_01_buttons_icons.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_01_buttons_icons.exe
+  neutrino_test_16_value_controls.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_16_value_controls.exe
+  neutrino_test_08_richtext_code.cpp
+  neutrino_test_07_popup_menu_categories.cpp
+  neutrino_test_06_placement_layout_scaling.cpp
+  neutrino_test_19_material_beauty.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_19_material_beauty.exe
+  neutrino_demo.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_demo.exe
+  neutrino_test_05_treeview_collapse.cpp
+  neutrino_test_04_listview_typed_data.cpp
+  neutrino_test_heavy_data.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_heavy_data.exe
+  neutrino_test_03_lists_combo_autoscroll.cpp
+  neutrino_test_08_richtext_code.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_08_richtext_code.exe
+  neutrino_test_07_popup_menu_categories.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_07_popup_menu_categories.exe
+  neutrino_test_04_listview_typed_data.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_04_listview_typed_data.exe
+  neutrino_test_03_lists_combo_autoscroll.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_03_lists_combo_autoscroll.exe
+  neutrino_test_06_placement_layout_scaling.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_06_placement_layout_scaling.exe
+  neutrino_test_05_treeview_collapse.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\build\Release\neutrino_test_05_treeview_collapse.exe

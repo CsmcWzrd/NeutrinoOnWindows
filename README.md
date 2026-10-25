@@ -13,3 +13,8 @@ The original proprietary notice is retained. Original notes in `docs/history`
 are historical and may describe the combined package; follow BUILDING.md here.
 
 See [BUILDING.md](BUILDING.md) for build and installation commands.
+# Main-window Neutrino Menu bar
+
+See [the wide-bar guide](docs/WIDE_BAR.md) for the optional main-window bar,
+menu overlay, red circular X, new examples 23/24, and integration-test commands.
+

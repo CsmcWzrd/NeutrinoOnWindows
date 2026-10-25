@@ -1031,6 +1031,8 @@ static LRESULT CALLBACK Neu_WindowProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp
     case WM_MOUSELEAVE:
     case WM_MOUSEWHEEL:
     case WM_MOUSEHWHEEL:
+    case WM_CAPTURECHANGED:
+    case WM_CANCELMODE:
     case WM_TIMER:
     case WM_SIZE:
     case WM_CLOSE: {
@@ -1122,12 +1124,14 @@ void Neu_Application::quit()
 void Neu_Application::registerWindow(Neu_Window* win)
 {
     if (win && std::find(windows_.begin(), windows_.end(), win) == windows_.end()) {
+        if (windows_.empty()) mainWindow_ = win;
         windows_.push_back(win);
     }
 }
 
 void Neu_Application::unregisterWindow(Neu_Window* win)
 {
+    if (mainWindow_ == win) mainWindow_ = nullptr;
     windows_.erase(std::remove(windows_.begin(), windows_.end(), win), windows_.end());
 }
 
@@ -2000,6 +2004,14 @@ void Neu_Control::draw(Display* d, Drawable drawable, GC gc, const Neu_Theme& th
 
 void Neu_Control::handleXEvent(XEvent& ev)
 {
+    if (ev.message == WM_CANCELMODE || ev.message == WM_CAPTURECHANGED) {
+        pressed_ = false;
+        activeScrollDrag_ = 0;
+        hover_ = false;
+        hoverHintArmed_ = false;
+        requestRedraw();
+        return;
+    }
     const bool inside = contains(ev.x, ev.y);
 
     auto resetHintAnchor = [&]() {
@@ -5260,6 +5272,231 @@ Neu_Window::Neu_Window(Neu_Application& app, int width, int height, const std::s
 Neu_Window::~Neu_Window()
 {
     close();
+    if (neutrinoMenu_) neutrinoMenu_->setParent(nullptr);
+}
+
+bool Neu_Window::setNeutrinoMenu(std::shared_ptr<Neu_PopWindowMenu> menu)
+{
+    if (menu && (!window_ || app_.mainWindow() != this ||
+                 (menu->parent() && menu->parent() != this) ||
+                 std::find(controls_.begin(), controls_.end(), menu) != controls_.end())) return false;
+    closeNeutrinoMenu();
+    if (neutrinoMenu_) neutrinoMenu_->setParent(nullptr);
+    neutrinoMenu_ = std::move(menu);
+    if (neutrinoMenu_) {
+        neutrinoMenu_->setParent(this);
+        neutrinoMenu_->hide();
+        layoutNeutrinoMenu();
+    }
+    requestRedraw();
+    return true;
+}
+
+void Neu_Window::setWideBarReferenceHeight(int)
+{
+    // Retained for source compatibility; sizing now follows the menu font only.
+}
+
+int Neu_Window::wideBarHeight() const
+{
+    LOGFONTW font{};
+    const int fontHeight = GetObjectW(uiFont(), sizeof(font), &font) ? std::abs(font.lfHeight) : 16;
+    return 3 * std::max(1, fontHeight);
+}
+
+Neu_Rect Neu_Window::neutrinoMenuCloseBounds() const
+{
+    const int strip = std::min(height_, wideBarHeight());
+    const int diameter = std::max(1, std::min(40, std::min(width_, strip) - 8));
+    return {std::max(0, width_ - diameter - 12), std::max(0, (strip - diameter) / 2), diameter, diameter};
+}
+
+void Neu_Window::layoutNeutrinoMenu()
+{
+    if (neutrinoMenu_)
+        neutrinoMenu_->setLayout(Neu_Layout{0, wideBarHeight(), width_, std::max(1, height_ - wideBarHeight())});
+}
+
+void Neu_Window::openNeutrinoMenu()
+{
+    if (!neutrinoMenu_ || !window_ || app_.mainWindow() != this) return;
+    if (!menuSessionActive_) {
+        menuPreviousFocus_ = focusedControl_;
+        if (auto combo = dynamic_cast<Neu_ComboBox*>(focusedControl_)) combo->closeDropDown();
+        XEvent cancel{};
+        cancel.message = WM_CANCELMODE;
+        if (captureControl_) captureControl_->handleXEvent(cancel);
+        if (hoveredControl_) hoveredControl_->handleXEvent(cancel);
+        captureControl_ = nullptr;
+        hoveredControl_ = nullptr;
+        if (GetCapture() == window_) ReleaseCapture();
+        setFocusedControl(nullptr);
+        menuSessionActive_ = true;
+    }
+    wideBarPressed_ = false;
+    menuClosePressed_ = false;
+    layoutNeutrinoMenu();
+    neutrinoMenu_->show();
+    requestRedraw();
+}
+
+void Neu_Window::finishNeutrinoMenuSession()
+{
+    if (!menuSessionActive_) return;
+    XEvent cancel{};
+    cancel.message = WM_CANCELMODE;
+    if (captureControl_) captureControl_->handleXEvent(cancel);
+    if (hoveredControl_) hoveredControl_->handleXEvent(cancel);
+    captureControl_ = nullptr;
+    hoveredControl_ = nullptr;
+    menuClosePressed_ = false;
+    if (GetCapture() == window_) ReleaseCapture();
+    setFocusedControl(nullptr);
+    if (menuPreviousFocus_ && menuPreviousFocus_->visible() && menuPreviousFocus_->enabled())
+        setFocusedControl(menuPreviousFocus_);
+    menuPreviousFocus_ = nullptr;
+    menuSessionActive_ = false;
+}
+
+void Neu_Window::closeNeutrinoMenu()
+{
+    if (neutrinoMenu_) neutrinoMenu_->hide();
+    finishNeutrinoMenuSession();
+    wideBarPressed_ = false;
+    requestRedraw();
+}
+
+void Neu_Window::drawNeutrinoMenu(Drawable target)
+{
+    if (!neutrinoMenu_) return;
+    if (neutrinoMenuOpen() && !menuSessionActive_) openNeutrinoMenu();
+    if (!neutrinoMenuOpen()) finishNeutrinoMenuSession();
+    layoutNeutrinoMenu();
+    const bool open = neutrinoMenuOpen();
+    RECT area{0, 0, width_, open ? height_ : std::min(height_, wideBarHeight())};
+    HBRUSH background = CreateSolidBrush(rgb(open ? theme_.background : theme_.glass));
+    FillRect(target, &area, background);
+    DeleteObject(background);
+    if (open) {
+        int saved = SaveDC(target);
+        IntersectClipRect(target, 0, wideBarHeight(), width_, height_);
+        neutrinoMenu_->draw(nullptr, target, target, theme_);
+        RestoreDC(target, saved);
+        const auto r = neutrinoMenuCloseBounds();
+        HBRUSH red = CreateSolidBrush(RGB(220, 35, 45));
+        auto oldBrush = SelectObject(target, red);
+        auto oldPen = SelectObject(target, GetStockObject(NULL_PEN));
+        Ellipse(target, r.x, r.y, r.x + r.width, r.y + r.height);
+        SelectObject(target, oldBrush);
+        SelectObject(target, oldPen);
+        DeleteObject(red);
+        HPEN white = CreatePen(PS_SOLID, 3, RGB(255, 255, 255));
+        oldPen = SelectObject(target, white);
+        const int inset = std::max(1, r.width / 3);
+        MoveToEx(target, r.x + inset, r.y + inset, nullptr);
+        LineTo(target, r.x + r.width - inset, r.y + r.height - inset);
+        MoveToEx(target, r.x + r.width - inset, r.y + inset, nullptr);
+        LineTo(target, r.x + inset, r.y + r.height - inset);
+        SelectObject(target, oldPen);
+        DeleteObject(white);
+    }
+    RECT title{16, 0, std::max(16, width_ - (open ? 64 : 16)), std::min(height_, wideBarHeight())};
+    auto oldFont = SelectObject(target, uiFont());
+    SetBkMode(target, TRANSPARENT);
+    SetTextColor(target, rgb(theme_.text));
+    DrawTextW(target, open ? L"Neutrino Menu" : L"Neutrino Menu  —  click to open", -1, &title,
+              DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+    SelectObject(target, oldFont);
+}
+
+bool Neu_Window::handleNeutrinoMenuEvent(XEvent& ev)
+{
+    if (!neutrinoMenu_) return false;
+    // A menu command may replace or remove its own overlay.
+    const auto keepMenuAlive = neutrinoMenu_;
+    if (neutrinoMenuOpen() && !menuSessionActive_) openNeutrinoMenu();
+    if (!neutrinoMenuOpen()) finishNeutrinoMenuSession();
+    layoutNeutrinoMenu();
+    if (ev.message == WM_CANCELMODE || ev.message == WM_CAPTURECHANGED) {
+        wideBarPressed_ = menuClosePressed_ = false;
+        if (captureControl_) captureControl_->handleXEvent(ev);
+        captureControl_ = nullptr;
+        return true;
+    }
+    const bool inBar = ev.x >= 0 && ev.x < width_ && ev.y >= 0 && ev.y < std::min(height_, wideBarHeight());
+    if (!neutrinoMenuOpen()) {
+        if (inBar && captureControl_ && ev.message == WM_LBUTTONUP) {
+            XEvent cancel{};
+            cancel.message = WM_CANCELMODE;
+            captureControl_->handleXEvent(cancel);
+            captureControl_ = nullptr;
+            if (GetCapture() == window_) ReleaseCapture();
+            return true;
+        }
+        if (ev.message == WM_LBUTTONDOWN && inBar) {
+            SetFocus(window_);
+            wideBarPressed_ = true;
+            SetCapture(window_);
+            return true;
+        }
+        if (ev.message == WM_LBUTTONUP && wideBarPressed_) {
+            const bool activate = inBar;
+            wideBarPressed_ = false;
+            if (GetCapture() == window_) ReleaseCapture();
+            if (activate) openNeutrinoMenu();
+            return true;
+        }
+        // The bar owns its strip, including hover and wheel events.
+        if (inBar && !captureControl_ && (ev.message == WM_MOUSEMOVE || ev.message == WM_MOUSEWHEEL ||
+                      ev.message == WM_MOUSEHWHEEL || ev.message == WM_LBUTTONUP)) {
+            if (hoveredControl_) {
+                XEvent leave = ev;
+                leave.message = WM_MOUSELEAVE;
+                hoveredControl_->handleXEvent(leave);
+                hoveredControl_ = nullptr;
+            }
+            return true;
+        }
+        return false;
+    }
+    const auto r = neutrinoMenuCloseBounds();
+    const double dx = ev.x - (r.x + r.width / 2.0);
+    const double dy = ev.y - (r.y + r.height / 2.0);
+    const bool inClose = dx * dx + dy * dy <= r.width * r.width / 4.0;
+    if (ev.message == WM_KEYDOWN && ev.wParam == VK_ESCAPE) {
+        closeNeutrinoMenu();
+        return true;
+    }
+    if (ev.message == WM_LBUTTONDOWN) {
+        SetFocus(window_);
+        menuClosePressed_ = inClose;
+        captureControl_ = inBar ? nullptr : hitTest(ev.x, ev.y);
+        setFocusedControl(captureControl_);
+        SetCapture(window_);
+        if (captureControl_) captureControl_->handleXEvent(ev);
+    } else if (ev.message == WM_LBUTTONUP) {
+        const bool close = menuClosePressed_ && inClose;
+        Neu_Control* target = captureControl_;
+        captureControl_ = nullptr;
+        menuClosePressed_ = false;
+        if (GetCapture() == window_) ReleaseCapture();
+        if (close) closeNeutrinoMenu();
+        else if (target) target->handleXEvent(ev);
+    } else if (ev.message == WM_KEYDOWN || ev.message == WM_CHAR) {
+        if (focusedControl_ && focusedControl_->visible() && focusedControl_->enabled()) focusedControl_->handleXEvent(ev);
+    } else if (ev.message == WM_MOUSEMOVE || ev.message == WM_MOUSEWHEEL || ev.message == WM_MOUSEHWHEEL) {
+        Neu_Control* target = captureControl_ ? captureControl_ : (inBar ? nullptr : hitTest(ev.x, ev.y));
+        if (hoveredControl_ && hoveredControl_ != target) {
+            XEvent leave = ev;
+            leave.message = WM_MOUSELEAVE;
+            hoveredControl_->handleXEvent(leave);
+        }
+        hoveredControl_ = target;
+        if (target) target->handleXEvent(ev);
+    }
+    // Consume every other input event while the menu overlays the content.
+    if (!neutrinoMenuOpen()) finishNeutrinoMenuSession();
+    return true;
 }
 
 bool Neu_Window::create()
@@ -5326,6 +5563,7 @@ void Neu_Window::close()
     }
 
     closing_ = true;
+    closeNeutrinoMenu();
     setFocusedControl(nullptr);
     captureControl_ = nullptr;
     releaseBuffers();
@@ -5396,6 +5634,7 @@ void Neu_Window::drawScene(Drawable target)
             c->drawHintPopup(nullptr, target, target, theme_);
         }
     }
+    drawNeutrinoMenu(target);
 }
 
 void Neu_Window::paint(Drawable target)
@@ -5450,7 +5689,7 @@ void Neu_Window::setMultiStageDoubleBuffering(bool enabled)
 
 void Neu_Window::add(std::shared_ptr<Neu_Control> control)
 {
-    if (control) {
+    if (control && control != neutrinoMenu_) {
         control->setParent(this);
         controls_.push_back(control);
     }
@@ -5493,6 +5732,7 @@ Neu_Control* Neu_Window::hitTest(int x, int y)
         return control.get();
     };
 
+    if (neutrinoMenuOpen()) return hitOne(hitOne, neutrinoMenu_, x, y);
     for (auto it = controls_.rbegin(); it != controls_.rend(); ++it) {
         Neu_Control* hit = hitOne(hitOne, *it, x, y);
         if (hit) {
@@ -5543,6 +5783,8 @@ void Neu_Window::handleXEvent(XEvent& ev)
         }
         return;
     }
+
+    if (handleNeutrinoMenuEvent(ev)) return;
 
     if (ev.message == WM_MOUSEMOVE) {
         TRACKMOUSEEVENT tme{};
@@ -5607,12 +5849,12 @@ void Neu_Window::handleXEvent(XEvent& ev)
     }
 
     if (ev.message == WM_LBUTTONUP) {
-        ReleaseCapture();
         Neu_Control* target = captureControl_ ? captureControl_ : hitTest(ev.x, ev.y);
+        captureControl_ = nullptr;
+        ReleaseCapture();
         if (target) {
             target->handleXEvent(ev);
         }
-        captureControl_ = nullptr;
         return;
     }
 

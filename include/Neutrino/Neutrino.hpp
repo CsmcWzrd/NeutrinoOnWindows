@@ -272,6 +272,9 @@ public:
     void unregisterWindow(Neu_Window* win);
     size_t windowCount() const { return windows_.size(); }
     bool hasWindows() const { return !windows_.empty(); }
+    // The first registered window is the main window; closing it does not
+    // promote an existing secondary window.
+    Neu_Window* mainWindow() const { return mainWindow_; }
     static Neu_Application* current();
     bool xrenderAvailable() const { return xrenderAvailable_; }
     Neu_Backend backend() const { return backend_; }
@@ -288,6 +291,7 @@ private:
     bool waylandAvailable_{false};
     bool running_{false};
     std::vector<Neu_Window*> windows_;
+    Neu_Window* mainWindow_{nullptr};
     static Neu_Application* current_;
 };
 
@@ -993,6 +997,18 @@ public:
     void setOnClose(Neu_WindowCallback cb, void* user_data) { onClose_ = cb; closeUserData_ = user_data; }
     int width() const { return width_; }
     int height() const { return height_; }
+    // Attach after create(), only on app.mainWindow(). Do not also add() this
+    // menu as a normal control. nullptr removes the bar and overlay.
+    bool setNeutrinoMenu(std::shared_ptr<Neu_PopWindowMenu> menu);
+    void openNeutrinoMenu();
+    void closeNeutrinoMenu();
+    bool neutrinoMenuOpen() const { return neutrinoMenu_ && neutrinoMenu_->isVisible(); }
+    bool wideBarVisible() const { return neutrinoMenu_ && !neutrinoMenuOpen(); }
+    // Legacy compatibility method: reference heights no longer affect sizing.
+    void setWideBarReferenceHeight(int height);
+    // Exactly three times the menu font's pixel height. Content is not reflowed.
+    int wideBarHeight() const;
+    Neu_Rect neutrinoMenuCloseBounds() const;
 private:
     Neu_Application& app_;
     Display* display_{nullptr};
@@ -1025,6 +1041,15 @@ private:
     void drawScene(Drawable target);
     Neu_Control* hitTest(int x, int y);
     void setFocusedControl(Neu_Control* control);
+    std::shared_ptr<Neu_PopWindowMenu> neutrinoMenu_;
+    Neu_Control* menuPreviousFocus_{nullptr};
+    bool wideBarPressed_{false};
+    bool menuClosePressed_{false};
+    bool menuSessionActive_{false};
+    void layoutNeutrinoMenu();
+    void drawNeutrinoMenu(Drawable target);
+    void finishNeutrinoMenuSession();
+    bool handleNeutrinoMenuEvent(XEvent& ev);
 };
 
 unsigned long Neu_Pixel(Display* d, const Neu_Color& color);

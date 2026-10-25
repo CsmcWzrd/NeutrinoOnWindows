@@ -1,0 +1,23 @@
+MSBuild version 18.11.0-1.26475.11+3cde5c8ec for .NET Framework
+
+  Neu_Win32.cpp
+  Neu_Cards.cpp
+  Neutrino.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\Win32\Release\Neutrino.lib
+  wide_bar_tests.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 1406 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  NeutrinoWideBarTests.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\Win32\Release\NeutrinoWideBarTests.exe
+  neutrino_test_23_wide_bar.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 1130 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  NeutrinoTest23WideBar.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\Win32\Release\NeutrinoTest23WideBar.exe
+  neutrino_test_24_main_window_menu.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 1207 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  NeutrinoTest24MainWindowMenu.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\Win32\Release\NeutrinoTest24MainWindowMenu.exe

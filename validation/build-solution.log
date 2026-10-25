@@ -1,0 +1,12 @@
+MSBuild version 18.11.0-1.26475.11+3cde5c8ec for .NET Framework
+
+  Neu_Win32.cpp
+  Neu_Cards.cpp
+  Generating Code...
+  Neutrino.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\x64\Debug\Neutrino.lib
+  wide_bar_tests.cpp
+  NeutrinoWideBarTests.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\x64\Debug\NeutrinoWideBarTests.exe
+  neutrino_test_23_wide_bar.cpp
+  NeutrinoTest23WideBar.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\x64\Debug\NeutrinoTest23WideBar.exe
+  neutrino_test_24_main_window_menu.cpp
+  NeutrinoTest24MainWindowMenu.vcxproj -> C:\Users\CsmcW\OneDrive\Documents\ChatGPT\Neutrino Project 3\Neutrino\msvc\bin\x64\Debug\NeutrinoTest24MainWindowMenu.exe
